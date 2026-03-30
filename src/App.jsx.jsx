@@ -5,14 +5,13 @@ import { useState, useEffect, useRef } from "react";
 // ============================================================
 const CONFIG = {
   // ── Identity ─────────────────────────────────────────────
-  username: "yourname",
-  displayName: "Your Full Name",
-  role: "Your Role / Title",
-  org: "Your Organization",
-  orgUrl: "https://example.com",
-  education: "PhD · University · advised by Advisor Name",
-  focus: "your research area, interests, and specializations",
-  photoUrl: "", // leave empty to hide photo
+  username: "smv",
+  displayName: "Soham Sandeep Gurav",
+  role: "Artificial Intelligence & Data Science Engineering Freshman",
+  org: "pvgcoet&m",
+  orgUrl: "no org as of now",
+  focus: "AI & ML foundations, quantum computing, data science, applied research",
+  photoUrl: "/profile.png", // leave empty to hide photo
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
@@ -20,17 +19,17 @@ const CONFIG = {
 
   // ── Social links ─────────────────────────────────────────
   links: [
-    { label: "email", icon: "✉", href: "mailto:you@example.com" },
-    { label: "scholar", icon: "◆", href: "https://scholar.google.com" },
-    { label: "linkedin", icon: "○", href: "https://linkedin.com" },
-    { label: "github", icon: "⌥", href: "https://github.com" },
-    { label: "twitter", icon: "𝕏", href: "https://twitter.com" },
+    { label: "email", icon: "✉", href: "mailto:sohamsgurav2006@gmail.com" },
+    { label: "researchgate", icon: "◆", href: "https://www.researchgate.net/profile/Soham-Gurav?ev=hdr_xprf" },
+    { label: "linkedin", icon: "○", href: "https://www.linkedin.com/in/soham-gurav-94b6b3384" },
+    { label: "github", icon: "⌥", href: "https://github.com/sohmh" },
+    { label: "twitter", icon: "𝕏", href: "https://x.com/7smv25" },
   ],
 
   // ── Updates log ──────────────────────────────────────────
   updates: [
-    { date: "2025-12", label: "NEW", text: "Launched personal website. You're looking at it." },
-    { date: "2025-06", label: null, text: "Joined Your Organization." },
+    { date: "3-30-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
+    
   ],
 
   // ── Sections content ─────────────────────────────────────
@@ -39,16 +38,14 @@ const CONFIG = {
     about: {
       title: "about",
       outputLines: [
-        "[ OK ] Starting session – {username}.fyi",
+        "[ OK ] Starting session – {smv}.fyi",
         "[ OK ] User profile loaded",
         "[ INFO ] Last login: Mon Mar 30 2026 12:00:00 AM",
       ],
       // Paragraphs for cat about.txt
       bio: [
-        "My name is {displayName}, and I am a {role} at {org}. [Write your intro here — what you work on, your focus areas, and what makes your work distinctive.]",
-        "Previously, I worked at [Previous Org], where I [describe what you did]. I obtained my PhD from [University], advised by [Advisor].",
-        "Outside of work, I [hobbies and personal interests — make it human and memorable].",
-        "If you're interested in collaborating or just want to connect, feel free to reach out.",
+        "I'm a 19 year old who has dedicated himself to pursue knowledge across multiple disciplines and channel it into breakthroughs which can alter the course of society",
+        "Apart from that my interests lie in Problem-Solving, mathematics, quantum computing technology, physics, quantitative finance, aerospace, race dynamics, history and philosophical Inquiry through writing.",
       ],
       // Show links and updates on about page
       showLinks: true,
@@ -59,86 +56,69 @@ const CONFIG = {
     research: {
       title: "research",
       outputLines: [
-        "[ OK ] Loaded {username}.fyi/research",
+        "[ OK ] Loaded {smv}.fyi/research",
         "[ OK ] Mounted publications index – {count} entries found",
         "[ INFO ] Click any entry to expand abstract & links",
       ],
       // Research statement paragraphs (cat research_statement.txt)
       statement: [
-        "My research focuses on [your primary area], with an emphasis on [specific focus]. I study [what you study] through [methods/approaches] — including [examples], to [goals].",
-        "Across my projects, a core theme has been [theme], studied empirically through [approach], and applied to [application domain].",
-        "Most recently, I have developed a keen interest in [latest research direction].",
+        "I'm interested in machine learning, quantum algorithms, and the emerging field of quantum ML",
+        "My goal is to build research experience that connects classical AI systems with quantum computational paradigms working toward intelligent systems that go beyond today's limitations.",
+        "I'm currently open to research collaborations, reading groups, and mentorship opportunities.",
       ],
       // Projects — add as many as you like
       projects: [
         {
           id: "01",
-          title: "Your Project Title One",
-          tags: ["BENCHMARK"],
-          year: null,
-          status: "STAY TUNED",
-          abstract: "Write your project abstract here. Describe what the benchmark/model/paper is about, what problem it solves, and what results you achieved.",
-          links: [{ label: "Paper", href: "#" }, { label: "Code", href: "#" }],
+          title: "Finance Capital",
+          tags: ["APP"],
+          year: 2026-02,
+          status: "Built and live on my Github",
+          abstract: "A comprehensive finance tracking application to monitor expenses, income, and budget goals. Features include real-time budget analysis, spending categorization, and visual reports to help users make informed financial decisions..",
+          links: [{ label: "Demo", href: "https://capital-finance-tracking-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Capital-Finance-Tracking-App" }],
         },
         {
           id: "02",
-          title: "Your Project Title Two",
-          tags: ["MODEL"],
-          year: "2025",
-          status: null,
-          abstract: "Another project abstract. This is a great model for X because Y.",
-          links: [{ label: "arXiv", href: "#" }, { label: "Demo", href: "#" }],
+          title: "Physique Log",
+          tags: ["APP"],
+          year: "2026-02",
+          status: "Built and live on my Github",
+          abstract: "A standalone mobile application that allows complete workout customization and daily progress tracking",
+          links: [{ label: "Demo", href: "https://physique-log-application.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Physique-Log-Application" }],
         },
         {
           id: "03",
-          title: "Your Dataset or Tool Name",
-          tags: ["DATASET"],
-          year: "2024",
-          status: null,
-          abstract: "Description of your dataset or tool.",
-          links: [{ label: "Paper", href: "#" }],
+          title: "Verdict",
+          tags: ["APP"],
+          year: "2026-02",
+          status: "Built and live on my Github",
+          abstract: "A minimalist daily routine tracker that scores your day on a 0–10 scale and delivers a verdict on how well you spent your time.",
+         links: [{ label: "Demo", href: "https://verdict-routine-tracker-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Verdict-Routine-Tracker-App" }],
         },
-        {
-          id: "04",
-          title: "Another Research Project",
-          tags: ["PAPER"],
-          year: "2023",
-          status: null,
-          abstract: "Your fourth project abstract goes here.",
-          links: [{ label: "Paper", href: "#" }, { label: "Code", href: "#" }],
-        },
+        
       ],
     },
 
     blog: {
       title: "blog",
       outputLines: [
-        "[ OK ] Mounted {username}.fyi/blog",
-        "[ OK ] {count} published post(s) – more queued",
+        "[ OK ] Mounted {smv}.fyi/blog",
+        "[ OK ] {0} published post(s) – more queued",
         "[ INFO ] Reading: posts/latest.txt",
+        
       ],
       posts: [
         {
           id: "01",
           title: "Your First Blog Post Title",
-          date: "2025-01-15",
+          date: "30-3-2026",
           slug: "your_first_post",
           preview: [
-            "Opening line of your blog post that grabs attention.",
-            "",
-            "Second paragraph — expand on the hook. Tell the story.",
-            "Continue the narrative here. What happened next?",
-            "",
-            "The turning point of your story goes here.",
-          ],
+            "idk what to write here yet",
+            "go to https://medium.com/@esmvee2006 to read my writings on medium",
+            ],
         },
-        {
-          id: "02",
-          title: "[ coming soon ]",
-          date: null,
-          slug: null,
-          preview: [],
-        },
+        
       ],
     },
 
@@ -146,9 +126,9 @@ const CONFIG = {
       title: "contact",
       outputLines: [
         "[ OK ] Loaded contact module",
-        "[ INFO ] Preferred: email",
+        "[ INFO ] Preferred: email or linkedin",
       ],
-      message: "The best way to reach me is via email. I try to respond within a few days. For research collaborations, feel free to include a brief description of what you have in mind.",
+      message: "I'm always open to discussing new projects, opportunities, collaborations and intellectual discussions. Feel free to reach out through any of the platforms below.",
     },
   },
 };
