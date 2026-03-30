@@ -9,7 +9,6 @@ const CONFIG = {
   displayName: "Soham Sandeep Gurav",
   role: "Artificial Intelligence & Data Science Engineering Freshman",
   org: "pvgcoet&m",
-  orgUrl: "no org as of now",
   focus: "AI & ML foundations, quantum computing, data science, applied research",
   photoUrl: import.meta.env.BASE_URL + "profile.png", // leave empty to hide photo
 
