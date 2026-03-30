@@ -147,7 +147,7 @@ const CONFIG = {
       ],
       message: "I'm always open to discussing new projects, opportunities, collaborations and intellectual discussions. Feel free to reach out through any of the platforms below.",
     },
-  }
+  };
 
 // ============================================================
 //  End of config — don't edit below unless you know React
