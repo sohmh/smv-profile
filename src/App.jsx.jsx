@@ -166,6 +166,21 @@ function interpolate(str, cfg, extras = {}) {
     .replace(/\{focus\}/g, cfg.focus);
 }
 
+function useMediumPosts() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch("https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@esmvee2006")
+      .then(r => r.json())
+      .then(data => {
+        setPosts(data.items || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+  return { posts, loading };
+}
+
 const TAG_COLORS = {
   BENCHMARK: "#f97316",
   MODEL: "#3b82f6",
@@ -537,37 +552,51 @@ function CredentialsPage() {
     </div>
   );
 }
+
+function MediumPostRow({ id, title, date, url, slug, preview, thumbnail }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="post-row">
+      <div className="post-header" onClick={() => setOpen(o => !o)}>
+        <span className="post-id">{id}</span>
+        <span className="post-title">{title}</span>
+        {date && <span className="post-date">{date}</span>}
+        <span className={`chevron ${open ? "open" : ""}`}>▶</span>
+      </div>
+      {open && (
+        <div className="post-preview">
+          <div className="preview-titlebar">
+            <span className="dot dot-r" /><span className="dot dot-y" /><span className="dot dot-g" />
+            <span className="preview-filename">posts/{slug}.txt</span>
+            <a href={url} target="_blank" rel="noreferrer" style={{ color: "var(--blue)", fontSize: "11px", textDecoration: "none" }}>↗ read on medium</a>
+          </div>
+          <div className="preview-content">
+            {thumbnail && <img src={thumbnail} alt="" style={{ width: "100%", maxHeight: "180px", objectFit: "cover", marginBottom: "12px", opacity: 0.85 }} />}
+            <p>{preview}...</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function BlogPage() {
   const s = CONFIG.sections.blog;
-  const published = s.posts.filter(p => p.slug).length;
+  const { posts, loading } = useMediumPosts();
   return (
     <div>
-      <OutputBlock lines={s.outputLines} extras={{ count: published }} />
+      <OutputBlock lines={s.outputLines} extras={{ count: posts.length }} />
       <Cmd cmd="ls" arg="-lt ./posts/" />
-      {s.posts.map(p => <PostRow key={p.id} post={p} />)}
-      {s.posts.find(p => p.slug) && (
-        <>
-          <Cmd cmd="less" arg={`posts/${s.posts.find(p => p.slug).slug}.txt`} />
-          <div style={{ border: "1px solid var(--border)" }}>
-            <div className="preview-titlebar">
-              <span className="dot dot-r" /><span className="dot dot-y" /><span className="dot dot-g" />
-              <span className="preview-filename">posts/{s.posts.find(p => p.slug).slug}.txt</span>
-              <span className="preview-lines">full post</span>
-            </div>
-            <div className="preview-content">
-              <p><span className="preview-bold">{s.posts.find(p => p.slug).title}</span></p>
-              <p style={{ color: "var(--text-dim)", fontSize: "12px" }}>
-                author <span style={{ color: "var(--blue)" }}>{CONFIG.displayName}</span>{" "}
-                date <span style={{ color: "var(--blue)" }}>{s.posts.find(p => p.slug).date}</span>
-              </p>
-              <p><span style={{ borderBottom: "1px solid var(--border)", display: "block", marginBottom: 8 }} /></p>
-              {(s.posts.find(p => p.slug).preview || []).map((line, i) => (
-                <p key={i}>{i === 0 ? <b>{line}</b> : line}</p>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+      {loading && <div style={{ color: "var(--text-dim)", padding: "12px 0" }}>[ fetching posts from medium.com/@esmvee2006... ]</div>}
+      {!loading && posts.length === 0 && <div style={{ color: "var(--text-dim)" }}>[ no posts found ]</div>}
+      {posts.map((post, i) => {
+        const date = post.pubDate?.slice(0, 10);
+        const slug = post.title?.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "").slice(0, 30);
+        const preview = post.description?.replace(/<[^>]+>/g, "").slice(0, 400);
+        return (
+          <MediumPostRow key={i} id={String(i + 1).padStart(2, "0")} title={post.title} date={date} url={post.link} slug={slug} preview={preview} thumbnail={post.thumbnail} />
+        );
+      })}
     </div>
   );
 }
