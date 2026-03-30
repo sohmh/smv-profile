@@ -115,6 +115,7 @@ const CONFIG = {
     },
     
   ]
+  }
 }
     blog: {
       title: "blog",
