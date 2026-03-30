@@ -11,7 +11,7 @@ const CONFIG = {
   org: "pvgcoet&m",
   orgUrl: "no org as of now",
   focus: "AI & ML foundations, quantum computing, data science, applied research",
-  photoUrl: "/smv-portfolio/profile.png", // leave empty to hide photo
+  photoUrl: import.meta.env.BASE_URL + "profile.png", // leave empty to hide photo
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
