@@ -11,7 +11,7 @@ const CONFIG = {
   org: "pvgcoet&m",
   orgUrl: "no org as of now",
   focus: "AI & ML foundations, quantum computing, data science, applied research",
-  photoUrl: "/profile.jpg", // leave empty to hide photo
+  photoUrl: "/profile.png", // leave empty to hide photo
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
