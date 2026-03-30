@@ -42,7 +42,7 @@ const CONFIG = {
         "[ OK ] User profile loaded",
         "[ INFO ] Last login: Mon Mar 30 2026 12:00:00 AM",
       ],
-      // Paragraphs for cat about.txt
+      // Paragraphs for smv about.txt
       bio: [
         "I'm a 19 year old who has dedicated himself to pursue knowledge across multiple disciplines and channel it into breakthroughs which can alter the course of society",
         "Apart from that my interests lie in Problem-Solving, mathematics, quantum computing technology, physics, quantitative finance, aerospace, race dynamics, history and philosophical Inquiry through writing.",
@@ -60,7 +60,7 @@ const CONFIG = {
         "[ OK ] Mounted publications index – {count} entries found",
         "[ INFO ] Click any entry to expand abstract & links",
       ],
-      // Research statement paragraphs (cat research_statement.txt)
+      // Research statement paragraphs (smv research_statement.txt)
       statement: [
         "I'm interested in machine learning, quantum algorithms, and the emerging field of quantum ML",
         "My goal is to build research experience that connects classical AI systems with quantum computational paradigms working toward intelligent systems that go beyond today's limitations.",
@@ -229,7 +229,7 @@ const css = `
   .cmd-line span.cmd-text { color: var(--orange); }
   .cmd-line span.cmd-arg { color: var(--blue); }
 
-  /* Text block (cat output) */
+  /* Text block (smv output) */
   .textblock { border-left: 2px solid var(--border); padding: 0 0 0 20px; color: var(--text); }
   .textblock p { margin-bottom: 18px; line-height: 1.8; }
   .textblock p:last-child { margin-bottom: 0; }
@@ -426,7 +426,7 @@ function PostRow({ post }) {
 function LinksSection() {
   return (
     <>
-      <Cmd cmd="cat" arg="links.txt" />
+      <Cmd cmd="smv" arg="links.txt" />
       <div className="links-row">
         {CONFIG.links.map(l => (
           <a key={l.label} href={l.href} className="ext-link">
@@ -463,7 +463,7 @@ function AboutPage() {
       <OutputBlock lines={s.outputLines} />
       <Cmd cmd="whois" arg={CONFIG.username} />
       <ProfileCard />
-      <Cmd cmd="cat" arg="about.txt" />
+      <Cmd cmd="smv" arg="about.txt" />
       <div className="textblock">
         {s.bio.map((para, i) => (
           <p key={i}>{interpolate(para, CONFIG)}</p>
@@ -493,7 +493,7 @@ function ResearchPage() {
   return (
     <div>
       <OutputBlock lines={s.outputLines} extras={{ count }} />
-      <Cmd cmd="cat" arg="research_statement.txt" />
+      <Cmd cmd="smv" arg="research_statement.txt" />
       <div className="textblock" style={{ marginBottom: "36px" }}>
         {s.statement.map((para, i) => (
           <p key={i}>{para}</p>
@@ -577,7 +577,7 @@ function ContactPage() {
   return (
     <div>
       <OutputBlock lines={s.outputLines} />
-      <Cmd cmd="cat" arg="contact.txt" />
+      <Cmd cmd="smv" arg="contact.txt" />
       <div className="contact-block">
         <p>{s.message}</p>
       </div>
