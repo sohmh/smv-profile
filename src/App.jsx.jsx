@@ -146,7 +146,8 @@ const CONFIG = {
         "[ INFO ] Preferred: email or linkedin",
       ],
       message: "I'm always open to discussing new projects, opportunities, collaborations and intellectual discussions. Feel free to reach out through any of the platforms below.",
-    },
+    }
+  }
   };
 
 // ============================================================
