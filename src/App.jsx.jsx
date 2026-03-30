@@ -11,7 +11,7 @@ const CONFIG = {
   org: "pvgcoet&m",
   orgUrl: "no org as of now",
   focus: "AI & ML foundations, quantum computing, data science, applied research",
-  photoUrl: "https://www.linkedin.com/in/soham-gurav-94b6b3384/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3Bpfmhg6MhSuGnNt2W7Vnxdw%3D%3D", // leave empty to hide photo
+  photoUrl: "/profile.jpg", // leave empty to hide photo
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
@@ -21,7 +21,7 @@ const CONFIG = {
   links: [
     { label: "email", icon: "✉", href: "mailto:sohamsgurav2006@gmail.com" },
     { label: "researchgate", icon: "◆", href: "https://www.researchgate.net/profile/Soham-Gurav?ev=hdr_xprf" },
-    { label: "linkedin", icon: "○", href: "www.linkedin.com/in/soham-gurav-94b6b3384" },
+    { label: "linkedin", icon: "○", href: "https://www.linkedin.com/in/soham-gurav-94b6b3384" },
     { label: "github", icon: "⌥", href: "https://github.com/sohmh" },
     { label: "twitter", icon: "𝕏", href: "https://x.com/7smv25" },
   ],
