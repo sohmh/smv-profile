@@ -330,7 +330,6 @@ function ProfileCard() {
           ["name", CONFIG.displayName],
           ["role", CONFIG.role],
           ["org", <a href={CONFIG.orgUrl}>{CONFIG.org}</a>],
-          ["phd", CONFIG.education],
           ["focus", CONFIG.focus],
         ].map(([k, v]) => (
           <div className="meta-row" key={k}>
