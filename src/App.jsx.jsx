@@ -14,7 +14,7 @@ const CONFIG = {
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
-  nav: ["about", "research", "blog", "contact"],
+  nav: ["about", "research", "credentials" , "blog", "contact"],
 
   // ── Social links ─────────────────────────────────────────
   links: [
@@ -98,7 +98,24 @@ const CONFIG = {
         
       ],
     },
-
+    credentials: {
+  title: "credentials",
+  outputLines: [
+    "[ OK ] Loaded {smv}.fyi/credentials",
+    "[ OK ] Verified certifications index",
+    "[ INFO ] Click to view details",
+  ],
+  items: [
+    {
+      id: "01",
+      title: "Google AI Essentials",
+      issuer: "Coursera / Google",
+      year: "25-12-2025",
+      link: "https://www.credly.com/badges/cb2859ff-82d4-4930-a378-6b806e27a603/linked_in_profile"
+    },
+    
+  ]
+}
     blog: {
       title: "blog",
       outputLines: [
@@ -487,6 +504,38 @@ function ResearchPage() {
   );
 }
 
+function CredentialsPage() {
+  const s = CONFIG.sections.credentials;
+
+  return (
+    <div>
+      <OutputBlock lines={s.outputLines} />
+      <Cmd cmd="ls" arg="-lt ./credentials/" />
+
+      {s.items.map(item => (
+        <div key={item.id} className="project-row">
+          <div className="project-header">
+            <span className="project-id">{item.id}</span>
+            <span className="project-title">{item.title}</span>
+            <span className="project-year">{item.year}</span>
+          </div>
+
+          <div className="project-body">
+            <p className="project-abstract">
+              Issued by: {item.issuer}
+            </p>
+
+            {item.link && (
+              <a href={item.link} className="project-link" target="_blank">
+                View Certificate
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 function BlogPage() {
   const s = CONFIG.sections.blog;
   const published = s.posts.filter(p => p.slug).length;
@@ -536,7 +585,7 @@ function ContactPage() {
   );
 }
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, blog: BlogPage, contact: ContactPage };
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage,credentials: CredentialsPage, blog: BlogPage, contact: ContactPage };
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
