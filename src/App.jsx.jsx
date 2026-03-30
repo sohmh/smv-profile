@@ -115,8 +115,7 @@ const CONFIG = {
     },
     
   ]
-  }
-},
+  },
     blog: {
       title: "blog",
       outputLines: [
@@ -586,7 +585,7 @@ function ContactPage() {
   );
 }
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage,credentials: CredentialsPage, blog: BlogPage, contact: ContactPage };
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, blog: BlogPage, contact: ContactPage };
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
