@@ -116,7 +116,7 @@ const CONFIG = {
     
   ]
   }
-}
+},
     blog: {
       title: "blog",
       outputLines: [
