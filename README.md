@@ -1,3 +1,19 @@
+ 
+ Standard Protocol To Make changes in Portfolio Website :
+ Open Github Desktop
+ Select the smv-portfolio website
+ click on open in vscode
+ open app.jsx.jsx file
+ make edits
+ ctrl+s
+ go back to github desktop
+ click on commit changes and then push origin
+ now open command prompt and give these commands one by one
+ cd C:\Users\HP\smv-portfolio
+ npm run build
+ npx gh-pages -d dist -f
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
