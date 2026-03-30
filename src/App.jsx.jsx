@@ -28,7 +28,7 @@ const CONFIG = {
   // ── Updates log ──────────────────────────────────────────
   updates: [
     { date: "3-30-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
-    { date: "3-30-2026", label: "IMP", text: "Website layout and Design is adapted from maya.fyi " },
+    { date: "3-30-2026", label: "IMP", text: "Website layout and Design is adapted from mariya.fyi " },
     
   ],
 
