@@ -580,7 +580,7 @@ function MediumPostRow({ id, title, date, url, slug, preview, thumbnail }) {
   );
 }
 
-function BlogPage() {
+ function BlogPage() {
   const s = CONFIG.sections.blog;
   const { posts, loading } = useMediumPosts();
   return (
