@@ -619,6 +619,37 @@ const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials:
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
+  const [booting, setBooting] = useState(true);
+  const [text, setText] = useState("");
+  useEffect(() => {
+  const lines = [
+    "> initializing smv.fyi...",
+    "> loading modules...",
+    "> welcome, Soham"
+  ];
+
+  let i = 0;
+  let j = 0;
+
+  function type() {
+    if (i < lines.length) {
+      if (j < lines[i].length) {
+        setText(prev => prev + lines[i][j]);
+        j++;
+        setTimeout(type, 30);
+      } else {
+        setText(prev => prev + "\n");
+        i++;
+        j = 0;
+        setTimeout(type, 300);
+      }
+    } else {
+      setTimeout(() => setBooting(false), 500);
+    }
+  }
+
+  type();
+}, []);
   const [active, setActive] = useState(CONFIG.nav[0]);
 
   const PageComponent = PAGE_COMPONENTS[active] || (() => (
@@ -627,6 +658,20 @@ export default function App() {
     </div>
   ));
 
+  if (booting) {
+  return (
+    <div style={{
+      background: "#0d0d0d",
+      color: "#4ade80",
+      height: "100vh",
+      padding: "40px",
+      fontFamily: "monospace",
+      whiteSpace: "pre-line"
+    }}>
+      {text}
+    </div>
+  );
+}
   return (
     <>
       <style>{css}</style>
