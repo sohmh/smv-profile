@@ -23,6 +23,7 @@ const CONFIG = {
     { label: "linkedin", icon: "○", href: "https://www.linkedin.com/in/soham-gurav-94b6b3384" },
     { label: "github", icon: "⌥", href: "https://github.com/sohmh" },
     { label: "twitter", icon: "𝕏", href: "https://x.com/7smv25" },
+    { label: "letterboxd", icon: "⏯", href: "https://letterboxd.com/sohmh/" },
   ],
 
   // ── Updates log ──────────────────────────────────────────
