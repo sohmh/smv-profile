@@ -155,7 +155,7 @@ const CONFIG = {
       date: "10-02-2026",
       location: "PVGCOET, Pune, India",
       note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
-      certificate: "/smv-portfolio/certificates/Sppustartupbootcamp.jpeg",
+      certificate: "/smv-profile/certificates/Sppustartupbootcamp.jpeg",
       
     },
     {
@@ -166,7 +166,7 @@ const CONFIG = {
       date: "03-02-2026",
       location: "PVGCOET, Pune, India",
       note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
-      certificate: "/smv-portfolio/certificates/YouthParliament.jpeg",
+      certificate: "/smv-profile/certificates/YouthParliament.jpeg",
       
     },
     {
@@ -187,7 +187,7 @@ const CONFIG = {
       date: "20-03-2026",
       location: "Online",
       note: "Participated in the screening round but didn't make it to the finals, learnt the basics of Blockchain Technology and its applications",
-      certificate: "/smv-portfolio/certificates/IgnitionHackverseParticipation.jpeg",
+      certificate: "/smv-profile/certificates/IgnitionHackverseParticipation.jpeg",
     },
   ],
 },
