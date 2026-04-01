@@ -14,7 +14,7 @@ const CONFIG = {
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
-  nav: ["about", "research", "credentials" , "blog", "events", "contact"],
+  nav: ["about", "research", "credentials" , "blog", "events", "notes", "contact"],
 
   // ── Social links ─────────────────────────────────────────
   links: [
@@ -191,6 +191,23 @@ const CONFIG = {
     },
   ],
 },
+notes: {
+  title: "notes",
+  outputLines: [
+    "[ OK ] Loaded {username}.fyi/notes",
+    "[ INFO ] Exported from Obsidian Canvas",
+  ],
+  entries: [
+    {
+      id: "01",
+      title: "Blockchain Basics",
+      topic: "Blockchain",
+      date: "19-03-2026",
+      description: "Studying about how blockchain technology works",
+      file: "/smv-profile/notes/Blockchains.html",
+    },
+  ],
+},
     contact: {
       title: "contact",
       outputLines: [
@@ -242,6 +259,8 @@ const TAG_COLORS = {
   SEMINAR: "#06b6d4",
   COMPETITION: "#f43f5e",
   WORKSHOP: "#84cc16",
+  NOTE: "#e879f9",
+  TOPIC: "#e879f9",
 };
 
 function tagColor(tag) {
@@ -699,6 +718,34 @@ function EventsPage() {
     </div>
   );
 }
+function NotesPage() {
+  const s = CONFIG.sections.notes;
+  return (
+    <div>
+      <OutputBlock lines={s.outputLines} />
+      <Cmd cmd="ls" arg="-lt ./notes/" />
+      {s.entries.map(e => (
+        <div className="project-row" key={e.id}>
+          <div className="project-header">
+            <span className="project-id">{e.id}</span>
+            <span className="project-title">{e.title}</span>
+            <div className="project-tags">
+              <span className="tag" style={{ color: tagColor(e.topic) }}>{e.topic}</span>
+            </div>
+            <span style={{ color: "var(--text-dim)", fontSize: "12px" }}>{e.date}</span>
+          </div>
+          <div style={{ padding: "0 18px 14px 58px", fontSize: "12.5px" }}>
+            {e.description && <p style={{ color: "var(--text)", lineHeight: "1.7", marginBottom: "8px" }}>{e.description}</p>}
+            <a href={e.file} target="_blank" rel="noreferrer"
+              style={{ color: "var(--blue)", border: "1px solid var(--border)", padding: "3px 10px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>
+              ↗ open note
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 function ContactPage() {
   const s = CONFIG.sections.contact;
   return (
@@ -713,7 +760,7 @@ function ContactPage() {
   );
 }
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, blog: BlogPage, events: EventsPage, contact: ContactPage };
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, blog: BlogPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
