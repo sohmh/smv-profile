@@ -149,30 +149,45 @@ const CONFIG = {
   entries: [
     {
       id: "01",
+      title: "SPPU Startup Bootcamp",
+      type: "SEMINAR",
+      org: "SPPU + Wadhwani Foundation",
+      date: "10-02-2026",
+      location: "PVGCOET, Pune, India",
+      note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
+      certificate: "/smv-portfolio/certificates/Sppustartupbootcamp.jpeg",
+      
+    },
+    {
+      id: "02",
       title: "Youth Parliament 2026",
       type: "COMPETITION",
       org: "Lakshya Aspirants Club - PVGCOET",
       date: "03-02-2026",
       location: "PVGCOET, Pune, India",
-      note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my siden ngl)",
+      note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
+      certificate: "/smv-portfolio/certificates/YouthParliament.jpeg",
+      
     },
     {
-      id: "02",
+      id: "03",
       title: "War of Words -Spectrum 2K26",
       type: "COMPETITION",
       org: "PCCOE Pimpri",
       date: "07-03-2026",
       location: "PCCOE Pimpri, Pune, India",
       note: "e.g. Finalist in the English Debate",
+      
     },
     {
-      id: "03",
+      id: "04",
       title: "Ignition Hackverse 2026",
       type: "COMPETITION",
       org: "PVGCOET",
       date: "20-03-2026",
       location: "Online",
       note: "Participated in the screening round but didn't make it to the finals, learnt the basics of Blockchain Technology and its applications",
+      certificate: "/smv-portfolio/certificates/IgnitionHackverseParticipation.jpeg",
     },
   ],
 },
@@ -641,32 +656,49 @@ function MediumPostRow({ id, title, date, url, slug, preview, thumbnail }) {
   );
 }
 
+function EventEntry({ e }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="project-row">
+      <div className="project-header" onClick={() => e.certificate && setOpen(o => !o)} style={{ cursor: e.certificate ? "pointer" : "default" }}>
+        <span className="project-id">{e.id}</span>
+        <span className="project-title">{e.title}</span>
+        <div className="project-tags">
+          <span className="tag" style={{ color: tagColor(e.type) }}>{e.type}</span>
+        </div>
+        <span style={{ color: "var(--text-dim)", fontSize: "12px" }}>{e.date}</span>
+        {e.certificate && <span className={`chevron ${open ? "open" : ""}`}>▶</span>}
+      </div>
+      <div style={{ padding: "0 18px 14px 58px", fontSize: "12.5px", color: "var(--text-dim)" }}>
+        <span style={{ color: "var(--text)" }}>{e.org}</span>
+        {e.location && <span> · {e.location}</span>}
+        {e.note && <p style={{ marginTop: "6px", color: "var(--text)", lineHeight: "1.7" }}>{e.note}</p>}
+        {e.certificate && (
+          <a href={e.certificate} target="_blank" rel="noreferrer"
+            style={{ display: "inline-block", marginTop: "8px", color: "var(--blue)", border: "1px solid var(--border)", padding: "3px 10px", fontSize: "12px", textDecoration: "none" }}>
+            ↗ view certificate
+          </a>
+        )}
+      </div>
+      {open && e.certificate && (
+        <div style={{ borderTop: "1px solid var(--border)", padding: "16px 18px" }}>
+          <img src={e.certificate} alt="certificate" style={{ width: "100%", maxHeight: "500px", objectFit: "contain", opacity: 0.9 }} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function EventsPage() {
   const s = CONFIG.sections.events;
   return (
     <div>
       <OutputBlock lines={s.outputLines} />
       <Cmd cmd="ls" arg="-lt ./events/" />
-      {s.entries.map(e => (
-        <div className="project-row" key={e.id}>
-          <div className="project-header">
-            <span className="project-id">{e.id}</span>
-            <span className="project-title">{e.title}</span>
-            <div className="project-tags">
-              <span className="tag" style={{ color: tagColor(e.type) }}>{e.type}</span>
-            </div>
-            <span style={{ color: "var(--text-dim)", fontSize: "12px" }}>{e.date}</span>
-          </div>
-          <div style={{ padding: "0 18px 14px 58px", fontSize: "12.5px", color: "var(--text-dim)" }}>
-            <span style={{ color: "var(--text)" }}>{e.org}</span>
-            {e.location && <span> · {e.location}</span>}
-            {e.note && <p style={{ marginTop: "6px", color: "var(--text)", lineHeight: "1.7" }}>{e.note}</p>}
-          </div>
-        </div>
-      ))}
+      {s.entries.map(e => <EventEntry key={e.id} e={e} />)}
     </div>
   );
-} 
+}
 function ContactPage() {
   const s = CONFIG.sections.contact;
   return (
