@@ -28,8 +28,9 @@ const CONFIG = {
 
   // ── Updates log ──────────────────────────────────────────
   updates: [
-    { date: "3-30-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
-    { date: "3-30-2026", label: "IMP", text: "Website layout and Design is adapted from mariya.fyi " },
+    { date: "3-4-2026", label: "NEW", text: "Competed in my first hackathon - 24HR Ignition hackverse" },
+    { date: "30-3-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
+    { date: "30-3-2026", label: "IMP", text: "Website layout and Design is adapted from mariya.fyi " },
     
   ],
 
@@ -97,6 +98,15 @@ const CONFIG = {
          links: [{ label: "Demo", href: "https://verdict-routine-tracker-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Verdict-Routine-Tracker-App" }],
         },
         
+         {
+          id: "04",
+          title: "LockChain",
+          tags: ["dAPP"],
+          year: "2026-04",
+          status: "Built and live on my Github",
+          abstract: "a decentralized application which leverages blockchain technology to provide secure peer to peer transactions through escrow smart contracts.",
+         links: [{ label: "Demo", href: "https://vercel.com/soham-guravs-projects-30fcd159/merkle-mavericks-code/4JA6MkC6hzg1gc6WPA77mkjbwRpJ" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
+        },
       ],
     },
     credentials: {
@@ -154,7 +164,7 @@ const CONFIG = {
       org: "SPPU + Wadhwani Foundation",
       date: "10-02-2026",
       location: "PVGCOET, Pune, India",
-      note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
+      note: "Understood & tried to apply the principals of Design Thinking & the fundamental finance behind starting a startup ",
       certificate: "/smv-profile/certificates/Sppustartupbootcamp.jpeg",
       
     },
@@ -181,13 +191,13 @@ const CONFIG = {
     },
     {
       id: "04",
-      title: "Ignition Hackverse 2026",
+      title: "Ignition Hackverse PVGCOET 2026 , 24 HR Hackathon",
       type: "COMPETITION",
       org: "PVGCOET",
       date: "20-03-2026",
-      location: "Online",
-      note: "Participated in the screening round but didn't make it to the finals, learnt the basics of Blockchain Technology and its applications",
-      certificate: "/smv-profile/certificates/IgnitionHackverseParticipation.jpeg",
+      location: "Offline",
+      note: "Participated in the 24HR Hackathon under the Blockchain Track",
+      certificate: "/smv-profile/certificates/ignitioncertificate.jpeg",
     },
   ],
 },
