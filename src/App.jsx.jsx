@@ -105,7 +105,7 @@ const CONFIG = {
           year: "2026-04",
           status: "Built and live on my Github",
           abstract: "a decentralized application which leverages blockchain technology to provide secure peer to peer transactions through escrow smart contracts.",
-         links: [{ label: "Demo", href: "https://vercel.com/soham-guravs-projects-30fcd159/merkle-mavericks-code/4JA6MkC6hzg1gc6WPA77mkjbwRpJ" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
+         links: [{ label: "Demo", href: "https://merkle-mavericks-code.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
         },
       ],
     },
