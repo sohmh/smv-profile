@@ -31,7 +31,7 @@ const CONFIG = {
     { date: "3-4-2026", label: "NEW", text: "Competed in my first hackathon - 24HR Ignition hackverse" },
     { date: "30-3-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
     { date: "30-3-2026", label: "IMP", text: "Website layout and Design is adapted from mariya.fyi " },
-    
+
   ],
 
   // ── Sections content ─────────────────────────────────────
@@ -95,38 +95,38 @@ const CONFIG = {
           year: "2026-02",
           status: "Built and live on my Github",
           abstract: "A minimalist daily routine tracker that scores your day on a 0–10 scale and delivers a verdict on how well you spent your time.",
-         links: [{ label: "Demo", href: "https://verdict-routine-tracker-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Verdict-Routine-Tracker-App" }],
+          links: [{ label: "Demo", href: "https://verdict-routine-tracker-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Verdict-Routine-Tracker-App" }],
         },
-        
-         {
+
+        {
           id: "04",
           title: "LockChain",
           tags: ["dAPP"],
           year: "2026-04",
           status: "Built and live on my Github",
           abstract: "a decentralized application which leverages blockchain technology to provide secure peer to peer transactions through escrow smart contracts.",
-         links: [{ label: "Demo", href: "https://merkle-mavericks-code.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
+          links: [{ label: "Demo", href: "https://merkle-mavericks-code.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
         },
       ],
     },
     credentials: {
-  title: "credentials",
-  outputLines: [
-    "[ OK ] Loaded {smv}.fyi/credentials",
-    "[ OK ] Verified certifications index",
-    "[ INFO ] Click to view details",
-  ],
-  items: [
-    {
-      id: "01",
-      title: "Google AI Essentials",
-      issuer: "Coursera / Google",
-      year: "25-12-2025",
-      link: "https://www.credly.com/badges/cb2859ff-82d4-4930-a378-6b806e27a603/linked_in_profile"
+      title: "credentials",
+      outputLines: [
+        "[ OK ] Loaded {smv}.fyi/credentials",
+        "[ OK ] Verified certifications index",
+        "[ INFO ] Click to view details",
+      ],
+      items: [
+        {
+          id: "01",
+          title: "Google AI Essentials",
+          issuer: "Coursera / Google",
+          year: "25-12-2025",
+          link: "https://www.credly.com/badges/cb2859ff-82d4-4930-a378-6b806e27a603/linked_in_profile"
+        },
+
+      ]
     },
-    
-  ]
-  },
     writings: {
       title: "writings",
       outputLines: [
@@ -145,84 +145,88 @@ const CONFIG = {
       ],
       posts: [
         // Add your blog posts here
-        // {
-        //   id: "01",
-        //   title: "Post title",
-        //   date: "12-4-2026",
-        //   slug: "post_slug",
-        //   preview: ["First line of preview", "Second line…"],
-        // },
+        {
+          id: "01",
+          title: "Current Hackathon Update",
+          date: "12-4-2026",
+          slug: "current_hackathon_update",
+          preview: [
+            "Just registered for the IIT Madras Road Safety Hackathon",
+            "Excited to work on an AI based solution for road safety",
+            "Will be updating this space with my progress"
+          ],
+        },
       ],
     },
 
     events: {
-  title: "events",
-  outputLines: [
-    "[ OK ] Loaded {username}.fyi/events",
-    "[ INFO ] Showing competitions, seminars & events",
-  ],
-  entries: [
-    {
-      id: "01",
-      title: "SPPU Startup Bootcamp",
-      type: "SEMINAR",
-      org: "SPPU + Wadhwani Foundation",
-      date: "10-02-2026",
-      location: "PVGCOET, Pune, India",
-      note: "Understood & tried to apply the principals of Design Thinking & the fundamental finance behind starting a startup ",
-      certificate: "/smv-profile/certificates/Sppustartupbootcamp.jpeg",
-      
+      title: "events",
+      outputLines: [
+        "[ OK ] Loaded {username}.fyi/events",
+        "[ INFO ] Showing competitions, seminars & events",
+      ],
+      entries: [
+        {
+          id: "01",
+          title: "SPPU Startup Bootcamp",
+          type: "SEMINAR",
+          org: "SPPU + Wadhwani Foundation",
+          date: "10-02-2026",
+          location: "PVGCOET, Pune, India",
+          note: "Understood & tried to apply the principals of Design Thinking & the fundamental finance behind starting a startup ",
+          certificate: "/smv-profile/certificates/Sppustartupbootcamp.jpeg",
+
+        },
+        {
+          id: "02",
+          title: "Youth Parliament 2026",
+          type: "COMPETITION",
+          org: "Lakshya Aspirants Club - PVGCOET",
+          date: "03-02-2026",
+          location: "PVGCOET, Pune, India",
+          note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
+          certificate: "/smv-profile/certificates/YouthParliament.jpeg",
+
+        },
+        {
+          id: "03",
+          title: "War of Words -Spectrum 2K26",
+          type: "COMPETITION",
+          org: "PCCOE Pimpri",
+          date: "07-03-2026",
+          location: "PCCOE Pimpri, Pune, India",
+          note: "e.g. Finalist in the English Debate",
+
+        },
+        {
+          id: "04",
+          title: "Ignition Hackverse PVGCOET 2026 , 24 HR Hackathon",
+          type: "COMPETITION",
+          org: "PVGCOET",
+          date: "20-03-2026",
+          location: "Offline",
+          note: "Participated in the 24HR Hackathon under the Blockchain Track",
+          certificate: "/smv-profile/certificates/ignitioncertificate.jpeg",
+        },
+      ],
     },
-    {
-      id: "02",
-      title: "Youth Parliament 2026",
-      type: "COMPETITION",
-      org: "Lakshya Aspirants Club - PVGCOET",
-      date: "03-02-2026",
-      location: "PVGCOET, Pune, India",
-      note: "Spoke as member of the ruling party (which ultimately won, not much contribution from my side ngl)",
-      certificate: "/smv-profile/certificates/YouthParliament.jpeg",
-      
+    notes: {
+      title: "notes",
+      outputLines: [
+        "[ OK ] Loaded {username}.fyi/notes",
+        "[ INFO ] Exported from Obsidian Canvas",
+      ],
+      entries: [
+        {
+          id: "01",
+          title: "Blockchain Basics",
+          topic: "Blockchain",
+          date: "19-03-2026",
+          description: "Studying about how blockchain technology works",
+          file: "/smv-profile/notes/Blockchains.html",
+        },
+      ],
     },
-    {
-      id: "03",
-      title: "War of Words -Spectrum 2K26",
-      type: "COMPETITION",
-      org: "PCCOE Pimpri",
-      date: "07-03-2026",
-      location: "PCCOE Pimpri, Pune, India",
-      note: "e.g. Finalist in the English Debate",
-      
-    },
-    {
-      id: "04",
-      title: "Ignition Hackverse PVGCOET 2026 , 24 HR Hackathon",
-      type: "COMPETITION",
-      org: "PVGCOET",
-      date: "20-03-2026",
-      location: "Offline",
-      note: "Participated in the 24HR Hackathon under the Blockchain Track",
-      certificate: "/smv-profile/certificates/ignitioncertificate.jpeg",
-    },
-  ],
-},
-notes: {
-  title: "notes",
-  outputLines: [
-    "[ OK ] Loaded {username}.fyi/notes",
-    "[ INFO ] Exported from Obsidian Canvas",
-  ],
-  entries: [
-    {
-      id: "01",
-      title: "Blockchain Basics",
-      topic: "Blockchain",
-      date: "19-03-2026",
-      description: "Studying about how blockchain technology works",
-      file: "/smv-profile/notes/Blockchains.html",
-    },
-  ],
-},
     contact: {
       title: "contact",
       outputLines: [
@@ -232,7 +236,7 @@ notes: {
       message: "I'm always open to discussing new projects, opportunities, collaborations and intellectual discussions. Feel free to reach out through any of the platforms below.",
     }
   }
-  };
+};
 
 // ============================================================
 //  End of config — don't edit below unless you know React
@@ -796,34 +800,34 @@ export default function App() {
   const [booting, setBooting] = useState(true);
   const [text, setText] = useState("");
   useEffect(() => {
-  const lines = [
-    "> initializing smv.fyi...",
-    "> loading modules...",
-    "> welcome, Soham"
-  ];
+    const lines = [
+      "> initializing smv.fyi...",
+      "> loading modules...",
+      "> welcome, Soham"
+    ];
 
-  let i = 0;
-  let j = 0;
+    let i = 0;
+    let j = 0;
 
-  function type() {
-    if (i < lines.length) {
-      if (j < lines[i].length) {
-        setText(prev => prev + lines[i][j]);
-        j++;
-        setTimeout(type, 30);
+    function type() {
+      if (i < lines.length) {
+        if (j < lines[i].length) {
+          setText(prev => prev + lines[i][j]);
+          j++;
+          setTimeout(type, 30);
+        } else {
+          setText(prev => prev + "\n");
+          i++;
+          j = 0;
+          setTimeout(type, 300);
+        }
       } else {
-        setText(prev => prev + "\n");
-        i++;
-        j = 0;
-        setTimeout(type, 300);
+        setTimeout(() => setBooting(false), 500);
       }
-    } else {
-      setTimeout(() => setBooting(false), 500);
     }
-  }
 
-  type();
-}, []);
+    type();
+  }, []);
   const [active, setActive] = useState(CONFIG.nav[0]);
 
   const PageComponent = PAGE_COMPONENTS[active] || (() => (
@@ -833,19 +837,19 @@ export default function App() {
   ));
 
   if (booting) {
-  return (
-    <div style={{
-      background: "#0d0d0d",
-      color: "#4ade80",
-      height: "100vh",
-      padding: "40px",
-      fontFamily: "monospace",
-      whiteSpace: "pre-line"
-    }}>
-      {text}
-    </div>
-  );
-}
+    return (
+      <div style={{
+        background: "#0d0d0d",
+        color: "#4ade80",
+        height: "100vh",
+        padding: "40px",
+        fontFamily: "monospace",
+        whiteSpace: "pre-line"
+      }}>
+        {text}
+      </div>
+    );
+  }
   return (
     <>
       <style>{css}</style>
