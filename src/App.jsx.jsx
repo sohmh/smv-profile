@@ -14,7 +14,7 @@ const CONFIG = {
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
-  nav: ["about", "research", "credentials" , "blog", "events", "notes", "contact"],
+  nav: ["about", "research", "credentials", "writings", "blog", "events", "notes", "contact"],
 
   // ── Social links ─────────────────────────────────────────
   links: [
@@ -74,7 +74,7 @@ const CONFIG = {
           id: "01",
           title: "Finance Capital",
           tags: ["APP"],
-          year: 2026-02,
+          year: "2026-02",
           status: "Built and live on my Github",
           abstract: "A comprehensive finance tracking application to monitor expenses, income, and budget goals. Features include real-time budget analysis, spending categorization, and visual reports to help users make informed financial decisions..",
           links: [{ label: "Demo", href: "https://capital-finance-tracking-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Capital-Finance-Tracking-App" }],
@@ -127,26 +127,31 @@ const CONFIG = {
     
   ]
   },
+    writings: {
+      title: "writings",
+      outputLines: [
+        "[ OK ] Mounted {smv}.fyi/writings",
+        "[ OK ] {count} published article(s) fetched from medium",
+        "[ INFO ] Reading: medium.com/@esmvee2006",
+      ],
+    },
+
     blog: {
       title: "blog",
       outputLines: [
         "[ OK ] Mounted {smv}.fyi/blog",
-        "[ OK ] {0} published post(s) – more queued",
+        "[ OK ] {count} published post(s)",
         "[ INFO ] Reading: posts/latest.txt",
-        
       ],
       posts: [
-        {
-          id: "01",
-          title: "Your First Blog Post Title",
-          date: "30-3-2026",
-          slug: "your_first_post",
-          preview: [
-            "idk what to write here yet",
-            "go to https://medium.com/@esmvee2006 to read my writings on medium",
-            ],
-        },
-        
+        // Add your blog posts here
+        // {
+        //   id: "01",
+        //   title: "Post title",
+        //   date: "12-4-2026",
+        //   slug: "post_slug",
+        //   preview: ["First line of preview", "Second line…"],
+        // },
       ],
     },
 
@@ -664,15 +669,15 @@ function MediumPostRow({ id, title, date, url, slug, preview, thumbnail }) {
   );
 }
 
- function BlogPage() {
-  const s = CONFIG.sections.blog;
+function WritingsPage() {
+  const s = CONFIG.sections.writings;
   const { posts, loading } = useMediumPosts();
   return (
     <div>
       <OutputBlock lines={s.outputLines} extras={{ count: posts.length }} />
-      <Cmd cmd="ls" arg="-lt ./posts/" />
+      <Cmd cmd="ls" arg="-lt ./writings/" />
       {loading && <div style={{ color: "var(--text-dim)", padding: "12px 0" }}>[ fetching posts from medium.com/@esmvee2006... ]</div>}
-      {!loading && posts.length === 0 && <div style={{ color: "var(--text-dim)" }}>[ no posts found ]</div>}
+      {!loading && posts.length === 0 && <div style={{ color: "var(--text-dim)" }}>[ no articles found ]</div>}
       {posts.map((post, i) => {
         const date = post.pubDate?.slice(0, 10);
         const slug = post.title?.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "").slice(0, 30);
@@ -681,6 +686,20 @@ function MediumPostRow({ id, title, date, url, slug, preview, thumbnail }) {
           <MediumPostRow key={i} id={String(i + 1).padStart(2, "0")} title={post.title} date={date} url={post.link} slug={slug} preview={preview} thumbnail={post.thumbnail} />
         );
       })}
+    </div>
+  );
+}
+
+function BlogPage() {
+  const s = CONFIG.sections.blog;
+  return (
+    <div>
+      <OutputBlock lines={s.outputLines} extras={{ count: s.posts.length }} />
+      <Cmd cmd="ls" arg="-lt ./blog/" />
+      {s.posts.length === 0 && (
+        <div style={{ color: "var(--text-dim)", padding: "12px 0" }}>[ no posts yet — add entries to CONFIG.sections.blog.posts ]</div>
+      )}
+      {s.posts.map(post => <PostRow key={post.id} post={post} />)}
     </div>
   );
 }
@@ -770,7 +789,7 @@ function ContactPage() {
   );
 }
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, blog: BlogPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, writings: WritingsPage, blog: BlogPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
