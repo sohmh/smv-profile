@@ -196,6 +196,7 @@ const CONFIG = {
           date: "07-03-2026",
           location: "PCCOE Pimpri, Pune, India",
           note: "e.g. Finalist in the English Debate",
+          certificate: "/smv-profile/certificates/pccoespectrumdebatecert.png",
 
         },
         {
