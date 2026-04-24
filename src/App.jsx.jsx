@@ -344,8 +344,12 @@ const css = `
   .nav-link { color: var(--text-dim); text-decoration: none; font-size: 12px; cursor: pointer; background: none; border: none; font-family: var(--font); transition: color 0.15s; }
   .nav-link:hover, .nav-link.active { color: var(--text-bright); }
   .nav-link.active { text-decoration: underline; text-underline-offset: 3px; }
-  .nav-toggle { margin-left: auto; width: 36px; height: 20px; background: var(--border); border-radius: 10px; border: none; cursor: pointer; position: relative; }
+  .nav-toggle { margin-left: auto; width: 36px; height: 20px; background: var(--border); border-radius: 10px; border: none; cursor: pointer; position: relative; transition: 0.2s; }
   .nav-toggle::after { content: ''; position: absolute; width: 14px; height: 14px; background: var(--text-dim); border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; }
+  .nav-toggle.active::after { left: 19px; }
+  
+  /* Sepia mode */
+  body.sepia-mode { filter: sepia(100%); }
 
   /* Page */
   .page { max-width: 860px; margin: 0 auto; padding: 48px 24px 100px; }
@@ -876,6 +880,12 @@ const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials:
 export default function App() {
   const [booting, setBooting] = useState(true);
   const [text, setText] = useState("");
+  const [sepia, setSepia] = useState(false);
+  
+  useEffect(() => {
+    document.body.classList.toggle("sepia-mode", sepia);
+  }, [sepia]);
+  
   useEffect(() => {
     const lines = [
       "> initializing smv.fyi...",
@@ -939,7 +949,11 @@ export default function App() {
             onClick={() => setActive(sec)}
           >{sec}</button>
         ))}
-        <button className="nav-toggle" aria-label="toggle theme" />
+        <button 
+          className={`nav-toggle ${sepia ? "active" : ""}`} 
+          aria-label="toggle theme"
+          onClick={() => setSepia(!sepia)}
+        />
       </nav>
       <div className="page">
         <PageComponent />
