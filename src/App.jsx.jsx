@@ -178,7 +178,7 @@ const CONFIG = {
           id: "01",
           title: "Escrow Based Secure Checkout System",
           artist: "me",
-          youtubeId: "https://youtu.be/Hd92UBj7EZA?si=DMU0KPzpQ_z29Gg5",
+          youtubeId: "Hd92UBj7EZA",
           date: "2026-04-24",
           description: "A demo of the system we made for the ignition hackverse hackathon"
         },
