@@ -14,7 +14,7 @@ const CONFIG = {
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
-  nav: ["about", "research", "credentials", "writings", "blog", "events", "notes", "contact"],
+  nav: ["about", "research", "credentials", "writings", "blog", "videos", "events", "notes", "contact"],
 
   // ── Social links ─────────────────────────────────────────
   links: [
@@ -163,6 +163,26 @@ const CONFIG = {
             "Will be updating this space with my progress"
           ],
         },
+      ],
+    },
+
+    videos: {
+      title: "videos",
+      outputLines: [
+        "[ OK ] Mounted {smv}.fyi/videos",
+        "[ OK ] {count} video(s) loaded from YouTube",
+        "[ INFO ] Streaming: cinematography & content",
+      ],
+      entries: [
+        {
+          id: "01",
+          title: "Escrow Based Secure Checkout System",
+          artist: "me",
+          youtubeId: "https://youtu.be/Hd92UBj7EZA?si=DMU0KPzpQ_z29Gg5",
+          date: "2026-04-24",
+          description: "A demo of the system we made for the ignition hackverse hackathon"
+        },
+        // Add more videos here with their YouTube IDs
       ],
     },
 
@@ -800,8 +820,57 @@ function ContactPage() {
     </div>
   );
 }
+function VideosPage() {
+  const s = CONFIG.sections.videos;
+  return (
+    <div>
+      <OutputBlock lines={s.outputLines} extras={{ count: s.entries.length }} />
+      <Cmd cmd="ls" arg="-lt ./videos/" />
+      {s.entries.length === 0 && (
+        <div style={{ color: "var(--text-dim)", padding: "12px 0" }}>[ no videos yet — add entries to CONFIG.sections.videos.entries ]</div>
+      )}
+      {s.entries.map(video => (
+        <div key={video.id} className="project-row">
+          <div className="project-header">
+            <span className="project-id">{video.id}</span>
+            <span className="project-title">{video.title}</span>
+            <span className="project-year" style={{ marginLeft: "auto" }}>{video.date}</span>
+          </div>
+          <div className="project-body" style={{ padding: "0" }}>
+            {video.youtubeId && (
+              <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", height: 0, overflow: "hidden", background: "#000" }}>
+                <iframe
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: "none"
+                  }}
+                  src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            )}
+            <div style={{ padding: "16px 18px" }}>
+              {video.artist && <p style={{ color: "var(--text-dim)", fontSize: "12px", marginBottom: "8px" }}>by {video.artist}</p>}
+              {video.description && <p style={{ color: "var(--text)", fontSize: "12.5px", lineHeight: "1.7", marginBottom: "12px" }}>{video.description}</p>}
+              <a href={`https://youtube.com/watch?v=${video.youtubeId}`} target="_blank" rel="noreferrer"
+                style={{ color: "var(--blue)", border: "1px solid var(--border)", padding: "3px 10px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>
+                ↗ watch on youtube
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, writings: WritingsPage, blog: BlogPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, writings: WritingsPage, blog: BlogPage, videos: VideosPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
 
 // ── App ──────────────────────────────────────────────────────
 export default function App() {
