@@ -344,14 +344,18 @@ const css = `
   .nav-link { color: var(--text-dim); text-decoration: none; font-size: 12px; cursor: pointer; background: none; border: none; font-family: var(--font); transition: color 0.15s; padding: 8px 4px; }
   .nav-link:hover, .nav-link.active { color: var(--text-bright); }
   .nav-link.active { text-decoration: underline; text-underline-offset: 3px; }
-  .nav-toggle { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: 4px; display: none; cursor: pointer; position: relative; transition: 0.2s; flex-direction: column; justify-content: center; align-items: center; gap: 4px; flex-shrink: 0; }
-  .nav-toggle.hamburger { margin-left: auto; }
-  .nav-toggle.theme-toggle { display: none; }
-  .nav-toggle.show { display: flex; }
+  .nav-toggle { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; position: relative; transition: 0.2s; flex-direction: column; justify-content: center; align-items: center; gap: 4px; flex-shrink: 0; }
+  .nav-toggle.hamburger { display: none; }
+  .nav-toggle.theme-toggle { display: flex; margin-left: auto; align-items: center; justify-content: center; }
   .nav-toggle-line { width: 20px; height: 2px; background: var(--text-dim); transition: 0.2s; }
-  .nav-toggle.active .nav-toggle-line:nth-child(1) { transform: rotate(45deg) translateY(10px); }
-  .nav-toggle.active .nav-toggle-line:nth-child(2) { opacity: 0; }
-  .nav-toggle.active .nav-toggle-line:nth-child(3) { transform: rotate(-45deg) translateY(-10px); }
+  .nav-toggle.hamburger .nav-toggle-line { width: 20px; height: 2px; }
+  /* Hide legacy three-line elements for the theme toggle and show a clear theme icon */
+  .nav-toggle.theme-toggle .nav-toggle-line { display: none; }
+  .theme-icon { width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); display: inline-block; transition: background 0.15s; }
+  .nav-toggle.theme-toggle.active .theme-icon { background: var(--orange); }
+  .nav-toggle.active.hamburger .nav-toggle-line:nth-child(1) { transform: rotate(45deg) translateY(10px); }
+  .nav-toggle.active.hamburger .nav-toggle-line:nth-child(2) { opacity: 0; }
+  .nav-toggle.active.hamburger .nav-toggle-line:nth-child(3) { transform: rotate(-45deg) translateY(-10px); }
   .nav-menu { display: flex; gap: 28px; }
   
   /* Sepia mode */
@@ -370,8 +374,8 @@ const css = `
     
     .nav { padding: 0 16px; gap: 12px; position: relative; }
     .nav-home { font-size: 12px; margin-right: 0; flex: 1; }
-    .nav-toggle.hamburger { display: flex; margin-left: 0; }
-    .nav-toggle.theme-toggle { display: flex; position: static; margin-left: auto; }
+    .nav-toggle.hamburger { display: flex; }
+    .nav-toggle.theme-toggle { margin-left: 0; }
     .nav-menu { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); flex-direction: column; gap: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
     .nav-menu.open { max-height: 400px; }
     .nav-menu .nav-link { display: block; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -1121,9 +1125,7 @@ export default function App() {
           aria-label="toggle theme"
           onClick={() => setSepia(!sepia)}
         >
-          <span className="nav-toggle-line"></span>
-          <span className="nav-toggle-line"></span>
-          <span className="nav-toggle-line"></span>
+          <span className="theme-icon" aria-hidden></span>
         </button>
       </nav>
       <div className="page">
