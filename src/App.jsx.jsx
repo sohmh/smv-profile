@@ -340,19 +340,58 @@ const css = `
 
   /* Nav */
   .nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); height: var(--nav-h); display: flex; align-items: center; padding: 0 24px; gap: 28px; }
-  .nav-home { color: var(--text-bright); text-decoration: none; font-weight: 500; margin-right: 8px; }
-  .nav-link { color: var(--text-dim); text-decoration: none; font-size: 12px; cursor: pointer; background: none; border: none; font-family: var(--font); transition: color 0.15s; }
+  .nav-home { color: var(--text-bright); text-decoration: none; font-weight: 500; margin-right: 8px; font-size: 13px; }
+  .nav-link { color: var(--text-dim); text-decoration: none; font-size: 12px; cursor: pointer; background: none; border: none; font-family: var(--font); transition: color 0.15s; padding: 8px 4px; }
   .nav-link:hover, .nav-link.active { color: var(--text-bright); }
   .nav-link.active { text-decoration: underline; text-underline-offset: 3px; }
-  .nav-toggle { margin-left: auto; width: 36px; height: 20px; background: var(--border); border-radius: 10px; border: none; cursor: pointer; position: relative; transition: 0.2s; }
-  .nav-toggle::after { content: ''; position: absolute; width: 14px; height: 14px; background: var(--text-dim); border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; }
-  .nav-toggle.active::after { left: 19px; }
+  .nav-toggle { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: 4px; display: none; cursor: pointer; position: relative; transition: 0.2s; flex-direction: column; justify-content: center; align-items: center; gap: 4px; flex-shrink: 0; }
+  .nav-toggle.hamburger { margin-left: auto; }
+  .nav-toggle.theme-toggle { display: none; }
+  .nav-toggle.show { display: flex; }
+  .nav-toggle-line { width: 20px; height: 2px; background: var(--text-dim); transition: 0.2s; }
+  .nav-toggle.active .nav-toggle-line:nth-child(1) { transform: rotate(45deg) translateY(10px); }
+  .nav-toggle.active .nav-toggle-line:nth-child(2) { opacity: 0; }
+  .nav-toggle.active .nav-toggle-line:nth-child(3) { transform: rotate(-45deg) translateY(-10px); }
+  .nav-menu { display: flex; gap: 28px; }
   
   /* Sepia mode */
   body.sepia-mode { filter: sepia(100%); }
 
   /* Page */
   .page { max-width: 860px; margin: 0 auto; padding: 48px 24px 100px; }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    :root {
+      --nav-h: 56px;
+    }
+    
+    body { font-size: 13px; }
+    
+    .nav { padding: 0 16px; gap: 12px; position: relative; }
+    .nav-home { font-size: 12px; margin-right: 0; flex: 1; }
+    .nav-toggle.hamburger { display: flex; margin-left: 0; }
+    .nav-toggle.theme-toggle { display: flex; position: static; margin-left: auto; }
+    .nav-menu { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); flex-direction: column; gap: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .nav-menu.open { max-height: 400px; }
+    .nav-menu .nav-link { display: block; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    .nav-menu .nav-link:hover { background: #1a1a1a; }
+    
+    .page { max-width: 100%; padding: 16px 16px 80px; }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --nav-h: 56px;
+    }
+    
+    body { font-size: 12px; }
+    
+    .nav { padding: 0 12px; gap: 8px; }
+    .nav-home { font-size: 11px; }
+    
+    .page { padding: 12px 12px 60px; }
+  }
 
   /* Output block */
   .output-block { border: 1px solid var(--border); padding: 14px 18px; margin-bottom: 40px; font-size: 12px; }
@@ -362,12 +401,31 @@ const css = `
   .out-link { color: var(--blue); text-decoration: none; }
   .out-link:hover { text-decoration: underline; }
 
+  @media (max-width: 768px) {
+    .output-block { padding: 12px 14px; margin-bottom: 28px; font-size: 11px; }
+    .output-label { font-size: 10px; }
+  }
+
+  @media (max-width: 480px) {
+    .output-block { padding: 10px 12px; margin-bottom: 20px; font-size: 10px; }
+  }
+
   /* Command */
   .cmd { margin: 36px 0 16px; }
-  .cmd-line { color: var(--text-dim); font-size: 13px; margin-bottom: 12px; }
+  .cmd-line { color: var(--text-dim); font-size: 13px; margin-bottom: 12px; word-break: break-word; }
   .cmd-line span.dollar { color: var(--text-bright); margin-right: 6px; }
   .cmd-line span.cmd-text { color: var(--orange); }
   .cmd-line span.cmd-arg { color: var(--blue); }
+
+  @media (max-width: 768px) {
+    .cmd { margin: 24px 0 12px; }
+    .cmd-line { font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .cmd { margin: 16px 0 8px; }
+    .cmd-line { font-size: 11px; }
+  }
 
   /* Text block (smv output) */
   .textblock { border-left: 2px solid var(--border); padding: 0 0 0 20px; color: var(--text); }
@@ -376,6 +434,16 @@ const css = `
   .textblock a { color: var(--blue); text-decoration: none; }
   .textblock a:hover { text-decoration: underline; }
   .highlight { color: var(--blue); font-weight: 500; }
+
+  @media (max-width: 768px) {
+    .textblock { padding: 0 0 0 16px; }
+    .textblock p { margin-bottom: 14px; }
+  }
+
+  @media (max-width: 480px) {
+    .textblock { padding: 0 0 0 12px; }
+    .textblock p { margin-bottom: 12px; font-size: 12px; }
+  }
 
   /* Profile card */
   .profile-row { display: flex; gap: 32px; align-items: flex-start; margin-bottom: 28px; }
@@ -388,6 +456,21 @@ const css = `
   .meta-val { color: var(--text-bright); }
   .meta-val a { color: var(--blue); text-decoration: none; }
   .meta-val a:hover { text-decoration: underline; }
+
+  @media (max-width: 768px) {
+    .profile-row { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+    .profile-photo { width: 120px; height: 120px; }
+    .profile-photo-placeholder { width: 120px; height: 120px; }
+    .profile-meta { width: 100%; }
+    .meta-row { flex-direction: column; gap: 4px; margin-bottom: 8px; text-align: center; }
+    .meta-key, .meta-colon { display: inline; min-width: auto; margin: 0 4px; }
+  }
+
+  @media (max-width: 480px) {
+    .profile-photo { width: 100px; height: 100px; }
+    .profile-photo-placeholder { width: 100px; height: 100px; }
+    .meta-row { font-size: 11px; }
+  }
 
   /* Projects list */
   .project-row { border: 1px solid var(--border); margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
@@ -403,9 +486,30 @@ const css = `
   .chevron.open { transform: rotate(90deg); }
   .project-body { border-top: 1px solid var(--border); padding: 16px 18px 18px 58px; background: #0a0a0a; }
   .project-abstract { color: var(--text); line-height: 1.75; margin-bottom: 12px; font-size: 12.5px; }
-  .project-links { display: flex; gap: 12px; }
-  .project-link { color: var(--blue); font-size: 12px; text-decoration: none; border: 1px solid var(--border); padding: 3px 10px; }
+  .project-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .project-link { color: var(--blue); font-size: 12px; text-decoration: none; border: 1px solid var(--border); padding: 6px 12px; min-height: 32px; display: flex; align-items: center; }
   .project-link:hover { border-color: var(--blue); }
+
+  @media (max-width: 768px) {
+    .project-header { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+    .project-id { min-width: auto; }
+    .project-title { font-size: 12px; }
+    .project-year, .project-status { font-size: 11px; }
+    .project-body { padding: 14px 14px 14px 14px; }
+    .project-abstract { font-size: 12px; }
+    .tag { font-size: 10px; }
+    .chevron { font-size: 9px; }
+    .project-links { gap: 8px; }
+    .project-link { font-size: 11px; padding: 5px 10px; min-height: 36px; }
+  }
+
+  @media (max-width: 480px) {
+    .project-row { margin-bottom: 6px; }
+    .project-header { padding: 10px 12px; }
+    .project-title { font-size: 11px; }
+    .project-abstract { font-size: 11px; }
+    .project-link { font-size: 10px; padding: 4px 8px; min-height: 36px; }
+  }
 
   /* Blog */
   .post-row { border: 1px solid var(--border); margin-bottom: 8px; cursor: pointer; }
@@ -416,27 +520,72 @@ const css = `
   .post-title { flex: 1; color: var(--text-bright); }
   .post-date { color: var(--orange); font-size: 12px; }
   .post-preview { border: 1px solid var(--border); border-top: none; }
-  .preview-titlebar { background: #1a1a1a; padding: 8px 18px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .preview-titlebar { background: #1a1a1a; padding: 8px 18px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim); flex-wrap: wrap; }
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
-  .preview-filename { flex: 1; text-align: center; }
-  .preview-lines { color: var(--text-dim); }
+  .preview-filename { flex: 1; text-align: center; min-width: 150px; }
+  .preview-lines { color: var(--text-dim); white-space: nowrap; }
   .preview-content { padding: 14px 18px 16px; font-size: 12.5px; line-height: 1.8; }
   .preview-content p { margin-bottom: 12px; }
   .preview-content p:empty { height: 6px; margin: 0; }
   .preview-bold { font-weight: 700; color: var(--text-bright); }
 
+  @media (max-width: 768px) {
+    .post-header { padding: 12px 14px; gap: 8px; font-size: 12px; }
+    .post-id { font-size: 11px; }
+    .post-title { font-size: 12px; }
+    .post-date { font-size: 11px; }
+    .preview-titlebar { padding: 6px 12px; gap: 6px; }
+    .preview-filename { min-width: 100px; }
+    .preview-content { padding: 12px 14px; font-size: 11.5px; }
+  }
+
+  @media (max-width: 480px) {
+    .post-row { margin-bottom: 6px; }
+    .post-header { padding: 10px 12px; }
+    .post-id { min-width: 20px; font-size: 10px; }
+    .post-title { font-size: 11px; }
+    .post-date { font-size: 10px; }
+    .preview-titlebar { font-size: 10px; }
+    .preview-content { padding: 10px 12px; font-size: 11px; }
+  }
+
   /* Links */
   .links-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
-  .ext-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); padding: 5px 14px; color: var(--text); text-decoration: none; font-size: 12px; transition: border-color 0.15s, color 0.15s; }
+  .ext-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); padding: 8px 14px; color: var(--text); text-decoration: none; font-size: 12px; transition: border-color 0.15s, color 0.15s; min-height: 36px; }
   .ext-link:hover { border-color: var(--text-dim); color: var(--text-bright); }
   .ext-link-icon { font-size: 11px; color: var(--text-dim); }
+
+  @media (max-width: 768px) {
+    .links-row { gap: 8px; }
+    .ext-link { padding: 6px 12px; font-size: 11px; min-height: 36px; }
+  }
+
+  @media (max-width: 480px) {
+    .links-row { gap: 6px; }
+    .ext-link { padding: 6px 10px; font-size: 10px; min-height: 36px; flex: 0 1 calc(50% - 3px); }
+    .ext-link-icon { font-size: 10px; }
+  }
 
   /* Updates */
   .update-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 8px; font-size: 12.5px; }
   .update-date { color: var(--text-dim); min-width: 54px; }
-  .update-badge { background: transparent; border: 1px solid var(--orange); color: var(--orange); font-size: 10px; padding: 1px 6px; letter-spacing: 0.06em; flex-shrink: 0; margin-top: 2px; }
+  .update-badge { background: transparent; border: 1px solid var(--orange); color: var(--orange); font-size: 10px; padding: 2px 6px; letter-spacing: 0.06em; flex-shrink: 0; margin-top: 2px; }
   .update-text { color: var(--text); }
+
+  @media (max-width: 768px) {
+    .update-row { gap: 12px; font-size: 12px; margin-bottom: 6px; }
+    .update-date { min-width: 50px; font-size: 11px; }
+    .update-badge { font-size: 9px; padding: 1px 5px; }
+    .update-text { font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .update-row { gap: 8px; flex-wrap: wrap; }
+    .update-date { flex-basis: 100%; font-size: 10px; }
+    .update-badge { font-size: 8px; }
+    .update-text { font-size: 11px; flex-basis: 100%; }
+  }
 
   /* Contact */
   .contact-block { border-left: 2px solid var(--border); padding-left: 20px; margin-bottom: 28px; line-height: 1.8; }
@@ -881,10 +1030,18 @@ export default function App() {
   const [booting, setBooting] = useState(true);
   const [text, setText] = useState("");
   const [sepia, setSepia] = useState(false);
+  const [active, setActive] = useState(CONFIG.nav[0]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   useEffect(() => {
     document.body.classList.toggle("sepia-mode", sepia);
   }, [sepia]);
+  
+  // Close menu when a nav link is clicked
+  const handleNavClick = (section) => {
+    setActive(section);
+    setMobileMenuOpen(false);
+  };
   
   useEffect(() => {
     const lines = [
@@ -915,7 +1072,6 @@ export default function App() {
 
     type();
   }, []);
-  const [active, setActive] = useState(CONFIG.nav[0]);
 
   const PageComponent = PAGE_COMPONENTS[active] || (() => (
     <div style={{ color: "var(--text-dim)", padding: "40px 0" }}>
@@ -941,19 +1097,34 @@ export default function App() {
     <>
       <style>{css}</style>
       <nav className="nav">
-        <a className="nav-home nav-link" onClick={() => setActive(CONFIG.nav[0])}>~/{CONFIG.username}</a>
-        {CONFIG.nav.map(sec => (
-          <button
-            key={sec}
-            className={`nav-link ${active === sec ? "active" : ""}`}
-            onClick={() => setActive(sec)}
-          >{sec}</button>
-        ))}
+        <a className="nav-home nav-link" onClick={() => handleNavClick(CONFIG.nav[0])}>~/{CONFIG.username}</a>
+        <div className={`nav-menu ${mobileMenuOpen ? "open" : ""}`}>
+          {CONFIG.nav.map(sec => (
+            <button
+              key={sec}
+              className={`nav-link ${active === sec ? "active" : ""}`}
+              onClick={() => handleNavClick(sec)}
+            >{sec}</button>
+          ))}
+        </div>
         <button 
-          className={`nav-toggle ${sepia ? "active" : ""}`} 
+          className={`nav-toggle hamburger ${mobileMenuOpen ? "active" : ""}`} 
+          aria-label="toggle menu"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <span className="nav-toggle-line"></span>
+          <span className="nav-toggle-line"></span>
+          <span className="nav-toggle-line"></span>
+        </button>
+        <button 
+          className={`nav-toggle theme-toggle ${sepia ? "active" : ""}`} 
           aria-label="toggle theme"
           onClick={() => setSepia(!sepia)}
-        />
+        >
+          <span className="nav-toggle-line"></span>
+          <span className="nav-toggle-line"></span>
+          <span className="nav-toggle-line"></span>
+        </button>
       </nav>
       <div className="page">
         <PageComponent />
