@@ -1099,14 +1099,53 @@ export default function App() {
   if (booting) {
     return (
       <div style={{
-        background: "#0d0d0d",
-        color: "#4ade80",
+        position: "relative",
         height: "100vh",
-        padding: "40px",
+        overflow: "hidden",
         fontFamily: "monospace",
         whiteSpace: "pre-line"
       }}>
-        {text}
+        {/* Video background */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover"
+          }}
+        >
+          <source src={import.meta.env.BASE_URL + "profani.mp4"} type="video/mp4" />
+        </video>
+
+        {/* Dark overlay */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.55)"
+        }} />
+
+        {/* Terminal text with z-index layering */}
+        <div style={{
+          position: "relative",
+          zIndex: 10,
+          color: "#4ade80",
+          padding: "40px",
+          height: "100vh",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "flex-start"
+        }}>
+          {text}
+        </div>
       </div>
     );
   }
