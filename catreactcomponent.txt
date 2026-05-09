@@ -1,0 +1,310 @@
+import React, { useState, useEffect, useMemo, useRef } from 'react'; 
+
+export default function App() {
+    const catArt = [
+        "       /\_/\       ",
+        "      ( o.o )      ",
+        "       > ^ <       ",
+        "      /  |  \      ",
+        "     /   |   \     ",
+        "    /    |    \    ",
+        "   /     |     \   ",
+        "  /      |      \  ",
+        " (       |       ) ",
+        "  \      |      /  ",
+        "   \|/   "
+    ]; 
+const logMessages = [
+    "initializing modules... ",
+    "bypassing firewall...  ",
+    "loading neural core... ",
+    "decrypting packets...  ",
+    "scanning ports 1-65535 ",
+    "compiling assets...    ",
+    "establishing tunnel... ",
+    "injecting payload...   ",
+    "root access granted... ",
+    "hiding traces...       "
+];
+
+const targets = useMemo(() => {
+    const t = [];
+    catArt.forEach((line, y) => {
+        for (let x = 0; x < line.length; x++) {
+            if (line[x] !== ' ') {
+                t.push({ x, y, char: line[x] });
+            }
+        }
+    });
+    return t;
+}, []);
+
+const initialParticles = useMemo(() => {
+    const pPerLog = 24;
+    return targets.map((target, i) => {
+        const logIndex = Math.floor(i / pPerLog);
+        const charIndex = i % pPerLog;
+        const log = logMessages[logIndex % logMessages.length];
+        return {
+            id: i,
+            targetX: target.x,
+            targetY: target.y,
+            targetChar: target.char,
+            logX: -30 + (logIndex % 3) * 25 + (Math.random() - 0.5) * 5 + charIndex,
+            logY: -15 + Math.floor(logIndex / 3) * 15 + (Math.random() - 0.5) * 2,
+            logChar: log[charIndex] || (Math.random() > 0.5 ? '/' : '|'),
+            renderX: 0,
+            renderY: 0,
+            currentChar: log[charIndex] || '/'
+        };
+    });
+}, [targets]);
+
+const [particles, setParticles] = useState(initialParticles);
+const [bootLines, setBootLines] = useState([]);
+const [glitchStyle, setGlitchStyle] = useState({});
+const [cursorPos, setCursorPos] = useState({ x: -9.5, y: -5.5 });
+const frameRef = useRef(null);
+const startTimeRef = useRef(Date.now());
+
+useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes scrollUp {
+            from { transform: translateY(100vh); }
+            to { transform: translateY(-100%); }
+        }
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            5% { opacity: 0.90; }
+            10% { opacity: 0.98; }
+            15% { opacity: 0.92; }
+            20% { opacity: 0.95; }
+            100% { opacity: 0.98; }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff8855; filter: brightness(1); }
+            50% { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff8855, 0 0 80px #00ff8822; filter: brightness(1.2); }
+        }
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes noise-anim {
+            0% { transform: translate(0,0); }
+            10% { transform: translate(-5%,-10%); }
+            20% { transform: translate(-15%,5%); }
+            30% { transform: translate(7%,-25%); }
+            40% { transform: translate(-5%,25%); }
+            50% { transform: translate(-15%,10%); }
+            60% { transform: translate(15%,0%); }
+            70% { transform: translate(0%,15%); }
+            80% { transform: translate(3%,35%); }
+            90% { transform: translate(-10%,10%); }
+            100% { transform: translate(0,0); }
+        }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+}, []);
+
+useEffect(() => {
+    const bootSequence = [
+        "BIOS v4.2.0 initialized...",
+        "Detecting hardware...",
+        "CPU: Neural Core X9 @ 4.8GHz",
+        "RAM: 128PB Quantum Memory [OK]",
+        "Loading kernel modules...",
+        "Mounting /dev/brain0...",
+        "Starting network interfaces...",
+        "ETH0: 192.168.1.337",
+        "Establishing encrypted tunnel...",
+        "SYSTEM READY."
+    ];
+    let lineIndex = 0;
+    const interval = setInterval(() => {
+        if (lineIndex < bootSequence.length) {
+            setBootLines(prev => [...prev, bootSequence[lineIndex]]);
+            lineIndex++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 300);
+    return () => clearInterval(interval);
+}, []);
+
+useEffect(() => {
+    const trigger = () => {
+        setGlitchStyle({
+            transform: `translate(${(Math.random() - 0.5) * 10}px, ${(Math.random() - 0.5) * 5}px) skewX(${(Math.random() - 0.5) * 2}deg)`,
+            filter: `hue-rotate(${Math.random() * 60 - 30}deg) brightness(1.5)`,
+            textShadow: `2px 0 #ff0000, -2px 0 #00ffff`
+        });
+        setTimeout(() => {
+            setGlitchStyle({
+                transform: 'translate(0,0) skewX(0deg)',
+                filter: 'none',
+                textShadow: 'none'
+            });
+        }, 100 + Math.random() * 100);
+    };
+    const id = setInterval(trigger, 3000 + Math.random() * 4000);
+    return () => clearInterval(id);
+}, []);
+
+useEffect(() => {
+    const animate = () => {
+        const now = Date.now();
+        const loopDuration = 12000;
+        const elapsed = (now - startTimeRef.current) % loopDuration;
+
+        setParticles(prev => {
+            if (elapsed < 4000) {
+                setCursorPos({ x: -30 + Math.sin(now/1000)*5, y: -15 + Math.cos(now/1200)*3 });
+                return prev.map((p, i) => ({
+                    ...p,
+                    renderX: p.logX + Math.sin(now / 1000 + i) * 0.5,
+                    renderY: p.logY + Math.cos(now / 1200 + i) * 0.3,
+                    currentChar: p.logChar
+                }));
+            } else if (elapsed < 7500) {
+                const progress = Math.min(1, (elapsed - 4000) / 3500);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                return prev.map((p, i) => ({
+                    ...p,
+                    renderX: p.logX + (p.targetX - p.logX) * eased + (1 - eased) * Math.sin(now / 100 + i) * 2,
+                    renderY: p.logY + (p.targetY - p.logY) * eased + (1 - eased) * Math.cos(now / 120 + i) * 1,
+                    currentChar: progress > 0.7 ? p.targetChar : (progress > 0.3 ? String.fromCharCode(33 + Math.floor(Math.random() * 90)) : p.logChar)
+                }));
+            } else if (elapsed < 10000) {
+                setCursorPos({ x: 9.5, y: 5.5 * 1.2 });
+                return prev.map(p => ({
+                    ...p,
+                    renderX: p.targetX,
+                    renderY: p.targetY,
+                    currentChar: p.targetChar
+                }));
+            } else {
+                const progress = Math.min(1, (elapsed - 10000) / 2000);
+                const eased = 1 - Math.pow(1 - progress, 2);
+                return prev.map((p, i) => ({
+                    ...p,
+                    renderX: p.targetX + (p.logX - p.targetX) * eased + eased * Math.sin(now / 50 + i) * 5,
+                    renderY: p.targetY + (p.logY - p.targetY) * eased + eased * Math.cos(now / 60 + i) * 3,
+                    currentChar: progress < 0.3 ? p.targetChar : String.fromCharCode(33 + Math.floor(Math.random() * 90))
+                }));
+            }
+        });
+
+        frameRef.current = requestAnimationFrame(animate);
+    };
+    frameRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameRef.current);
+}, []);
+
+const isFormed = ((Date.now() - startTimeRef.current) % 12000) > 7500 && ((Date.now() - startTimeRef.current) % 12000) < 10000;
+
+const bgLogs = useMemo(() => 
+    Array.from({ length: 30 }, (_, i) => logMessages[Math.floor(Math.random() * logMessages.length)]), 
+[]);
+
+const offsetX = -9.5;
+const offsetY = -5.5 * 1.2;
+
+return (
+    <div className="fixed inset-0 bg-black overflow-hidden font-mono flex items-center justify-center" style={{ animation: 'flicker 0.15s infinite', color: '#00ff88' }}>
+        
+        {/* Background Scrolling Logs */}
+        <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none z-0">
+            {bgLogs.map((log, i) => (
+                <div key={i} className="absolute whitespace-nowrap text-xs"
+                     style={{
+                         left: `${Math.random() * 100}%`,
+                         top: `${Math.random() * 200}%`,
+                         animation: `scrollUp ${10 + Math.random() * 20}s linear infinite`,
+                         animationDelay: `-${Math.random() * 20}s`
+                     }}>
+                    {`> ${log}`}
+                </div>
+            ))}
+        </div>
+
+        {/* Boot Sequence */}
+        <div className="absolute top-4 left-4 text-xs z-20 w-full max-w-md">
+            {bootLines.map((line, i) => (
+                <div key={i} className="opacity-80 mb-1">
+                    <span className="opacity-50">root@kali:~# </span>
+                    {line}
+                </div>
+            ))}
+            <span className="opacity-80" style={{ animation: 'blink-cursor 0.8s step-end infinite' }}>█</span>
+        </div>
+
+        {/* Main Particle Container */}
+        <div 
+            className="absolute z-10 pointer-events-none select-none"
+            style={{ 
+                left: '50vw', 
+                top: '50vh', 
+                lineHeight: '1.2',
+                transition: 'text-shadow 0.5s ease, filter 0.5s ease',
+                ...(isFormed ? { animation: 'pulse-glow 2s ease-in-out infinite' } : {}),
+                ...glitchStyle
+            }}
+        >
+            {particles.map(p => (
+                <span 
+                    key={p.id} 
+                    className="absolute"
+                    style={{
+                        left: '0px',
+                        top: '0px',
+                        transform: `translate(calc(${p.renderX + offsetX}ch), calc(${p.renderY + offsetY}em))`,
+                        willChange: 'transform'
+                    }}
+                >
+                    {p.currentChar}
+                </span>
+            ))}
+        </div>
+
+        {/* Wandering Cursor */}
+        <div 
+            className="absolute z-20 pointer-events-none text-lg font-bold"
+            style={{ 
+                left: '50vw', 
+                top: '50vh', 
+                transform: `translate(calc(${cursorPos.x}ch), calc(${cursorPos.y}em))`,
+                animation: 'blink-cursor 0.5s step-end infinite'
+            }}
+        >
+            _
+        </div>
+
+        {/* Scanlines Overlay */}
+        <div className="pointer-events-none absolute inset-0 z-30"
+             style={{
+                 background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
+                 backgroundSize: '100% 4px'
+             }}
+        />
+
+        {/* Vignette Overlay */}
+        <div className="pointer-events-none absolute inset-0 z-30"
+             style={{
+                 background: 'radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%)'
+             }}
+        />
+
+        {/* TV Static Noise Overlay */}
+        <div className="pointer-events-none absolute inset-0 z-40 opacity-[0.03] mix-blend-overlay"
+             style={{
+                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                 backgroundSize: '256px 256px',
+                 animation: 'noise-anim 0.2s steps(10) infinite'
+             }}
+        />
+    </div>
+);
+
+} 
