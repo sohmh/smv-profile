@@ -1085,28 +1085,27 @@ function CatLoadingScreen({ text }) {
     const t = [];
     catArt.forEach((line, y) => {
       for (let x = 0; x < line.length; x++) {
-        if (line[x] !== ' ') {
-          t.push({ x, y, char: line[x] });
-        }
+        if (line[x] !== ' ') t.push({ x, y, char: line[x] });
       }
     });
     return t;
   }, []);
 
   const initialParticles = useMemo(() => {
-    const pPerLog = 24;
     return targets.map((target, i) => {
-      const logIndex = Math.floor(i / pPerLog);
-      const charIndex = i % pPerLog;
-      const log = logMessages[logIndex % logMessages.length];
+      // Scatter around center in a circular spread pattern
+      const angle = (i / targets.length) * Math.PI * 2 * 3 + i * 0.7;
+      const radius = 4 + (i % 7) * 1.5;
+      const log = logMessages[i % logMessages.length];
+      const charIndex = i % log.length;
       return {
         id: i,
         targetX: target.x,
         targetY: target.y,
         targetChar: target.char,
-        logX: -30 + (logIndex % 3) * 25 + (Math.random() - 0.5) * 5 + charIndex,
-        logY: -15 + Math.floor(logIndex / 3) * 15 + (Math.random() - 0.5) * 2,
-        logChar: log[charIndex] || (Math.random() > 0.5 ? '/' : '|'),
+        logX: Math.cos(angle) * radius * 2.2,   // ch — spread ±~14ch around center
+        logY: Math.sin(angle) * radius * 0.75,  // em — spread ±~8em around center
+        logChar: log[charIndex] || '/',
         renderX: 0,
         renderY: 0,
         currentChar: log[charIndex] || '/'
@@ -1114,47 +1113,53 @@ function CatLoadingScreen({ text }) {
     });
   }, [targets]);
 
+  // Pre-compute bg log positions once so Math.random() isn't called on every render
+  const bgLogs = useMemo(() =>
+    Array.from({ length: 30 }, (_, i) => ({
+      text: logMessages[i % logMessages.length],
+      left: (i * 37) % 100,
+      topPct: (i * 71) % 200,
+      dur: 10 + (i % 10) * 2,
+      delay: -(i * 1.7)
+    })),
+  []);
+
   const [particles, setParticles] = useState(initialParticles);
-  const [bootLines, setBootLines] = useState([]);
   const [glitchStyle, setGlitchStyle] = useState({});
   const [cursorPos, setCursorPos] = useState({ x: -9.5, y: -5.5 });
   const frameRef = useRef(null);
   const startTimeRef = useRef(Date.now());
 
+  // Inject keyframes
   useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
-      @keyframes scrollUp {
+      @keyframes cat-scrollUp {
         from { transform: translateY(100vh); }
-        to { transform: translateY(-100%); }
+        to   { transform: translateY(-100%); }
       }
-      @keyframes flicker {
-        0% { opacity: 0.97; }
-        5% { opacity: 0.90; }
-        10% { opacity: 0.98; }
-        15% { opacity: 0.92; }
-        20% { opacity: 0.95; }
+      @keyframes cat-flicker {
+        0%   { opacity: 0.97; }
+        5%   { opacity: 0.90; }
+        10%  { opacity: 0.98; }
+        15%  { opacity: 0.92; }
+        20%  { opacity: 0.95; }
         100% { opacity: 0.98; }
       }
-      @keyframes pulse-glow {
-        0%, 100% { text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff8855; filter: brightness(1); }
-        50% { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff8855, 0 0 80px #00ff8822; filter: brightness(1.2); }
+      @keyframes cat-pulse-glow {
+        0%,100% { text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff8855; filter: brightness(1); }
+        50%     { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff8855, 0 0 80px #00ff8822; filter: brightness(1.2); }
       }
-      @keyframes blink-cursor {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
+      @keyframes cat-blink {
+        0%,100% { opacity: 1; }
+        50%     { opacity: 0; }
       }
-      @keyframes noise-anim {
-        0% { transform: translate(0,0); }
-        10% { transform: translate(-5%,-10%); }
-        20% { transform: translate(-15%,5%); }
-        30% { transform: translate(7%,-25%); }
-        40% { transform: translate(-5%,25%); }
-        50% { transform: translate(-15%,10%); }
-        60% { transform: translate(15%,0%); }
-        70% { transform: translate(0%,15%); }
-        80% { transform: translate(3%,35%); }
-        90% { transform: translate(-10%,10%); }
+      @keyframes cat-noise {
+        0%   { transform: translate(0,0); }
+        20%  { transform: translate(-15%,5%); }
+        40%  { transform: translate(-5%,25%); }
+        60%  { transform: translate(15%,0%); }
+        80%  { transform: translate(3%,35%); }
         100% { transform: translate(0,0); }
       }
     `;
@@ -1162,31 +1167,7 @@ function CatLoadingScreen({ text }) {
     return () => document.head.removeChild(style);
   }, []);
 
-  useEffect(() => {
-    const bootSequence = [
-      "BIOS v4.2.0 initialized...",
-      "Detecting hardware...",
-      "CPU: Neural Core X9 @ 4.8GHz",
-      "RAM: 128PB Quantum Memory [OK]",
-      "Loading kernel modules...",
-      "Mounting /dev/brain0...",
-      "Starting network interfaces...",
-      "ETH0: 192.168.1.337",
-      "Establishing encrypted tunnel...",
-      "SYSTEM READY."
-    ];
-    let lineIndex = 0;
-    const interval = setInterval(() => {
-      if (lineIndex < bootSequence.length) {
-        setBootLines(prev => [...prev, bootSequence[lineIndex]]);
-        lineIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 300);
-    return () => clearInterval(interval);
-  }, []);
-
+  // Glitch effect
   useEffect(() => {
     const trigger = () => {
       setGlitchStyle({
@@ -1194,27 +1175,20 @@ function CatLoadingScreen({ text }) {
         filter: `hue-rotate(${Math.random() * 60 - 30}deg) brightness(1.5)`,
         textShadow: `2px 0 #ff0000, -2px 0 #00ffff`
       });
-      setTimeout(() => {
-        setGlitchStyle({
-          transform: 'translate(0,0) skewX(0deg)',
-          filter: 'none',
-          textShadow: 'none'
-        });
-      }, 100 + Math.random() * 100);
+      setTimeout(() => setGlitchStyle({}), 100 + Math.random() * 100);
     };
     const id = setInterval(trigger, 3000 + Math.random() * 4000);
     return () => clearInterval(id);
   }, []);
 
+  // Particle animation loop
   useEffect(() => {
     const animate = () => {
       const now = Date.now();
-      const loopDuration = 12000;
-      const elapsed = (now - startTimeRef.current) % loopDuration;
-
+      const elapsed = (now - startTimeRef.current) % 12000;
       setParticles(prev => {
         if (elapsed < 4000) {
-          setCursorPos({ x: -30 + Math.sin(now/1000)*5, y: -15 + Math.cos(now/1200)*3 });
+          setCursorPos({ x: Math.sin(now / 1000) * 5, y: Math.cos(now / 1200) * 2 });
           return prev.map((p, i) => ({
             ...p,
             renderX: p.logX + Math.sin(now / 1000 + i) * 0.5,
@@ -1232,12 +1206,7 @@ function CatLoadingScreen({ text }) {
           }));
         } else if (elapsed < 10000) {
           setCursorPos({ x: 9.5, y: 5.5 * 1.2 });
-          return prev.map(p => ({
-            ...p,
-            renderX: p.targetX,
-            renderY: p.targetY,
-            currentChar: p.targetChar
-          }));
+          return prev.map(p => ({ ...p, renderX: p.targetX, renderY: p.targetY, currentChar: p.targetChar }));
         } else {
           const progress = Math.min(1, (elapsed - 10000) / 2000);
           const eased = 1 - Math.pow(1 - progress, 2);
@@ -1249,7 +1218,6 @@ function CatLoadingScreen({ text }) {
           }));
         }
       });
-
       frameRef.current = requestAnimationFrame(animate);
     };
     frameRef.current = requestAnimationFrame(animate);
@@ -1257,33 +1225,45 @@ function CatLoadingScreen({ text }) {
   }, []);
 
   const isFormed = ((Date.now() - startTimeRef.current) % 12000) > 7500 && ((Date.now() - startTimeRef.current) % 12000) < 10000;
-
-  const bgLogs = useMemo(() =>
-    Array.from({ length: 30 }, (_, i) => logMessages[Math.floor(Math.random() * logMessages.length)]),
-  []);
-
   const offsetX = -9.5;
   const offsetY = -5.5 * 1.2;
 
   return (
-    <div className="fixed inset-0 bg-black overflow-hidden font-mono flex items-center justify-center" style={{ animation: 'flicker 0.15s infinite', color: '#00ff88' }}>
+    <div style={{
+      position: 'fixed', inset: 0, top: 0, left: 0, right: 0, bottom: 0,
+      width: '100vw', height: '100vh',
+      background: '#000',
+      overflow: 'hidden',
+      fontFamily: 'monospace',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#00ff88',
+      animation: 'cat-flicker 0.15s infinite',
+      zIndex: 9999
+    }}>
 
       {/* Background Scrolling Logs */}
-      <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none z-0">
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        overflow: 'hidden', opacity: 0.1, pointerEvents: 'none', zIndex: 0
+      }}>
         {bgLogs.map((log, i) => (
-          <div key={i} className="absolute whitespace-nowrap text-xs"
-               style={{
-                 left: `${Math.random() * 100}%`,
-                 top: `${Math.random() * 200}%`,
-                 animation: `scrollUp ${10 + Math.random() * 20}s linear infinite`,
-                 animationDelay: `-${Math.random() * 20}s`
-               }}>
-            {`> ${log}`}
+          <div key={i} style={{
+            position: 'absolute',
+            whiteSpace: 'nowrap',
+            fontSize: '11px',
+            left: `${log.left}%`,
+            top: `${log.topPct}%`,
+            animation: `cat-scrollUp ${log.dur}s linear infinite`,
+            animationDelay: `${log.delay}s`
+          }}>
+            {`> ${log.text}`}
           </div>
         ))}
       </div>
 
-      {/* Three output lines from the type() animation */}
+      {/* Three typed output lines */}
       <div style={{
         position: 'absolute',
         top: '40px',
@@ -1291,88 +1271,80 @@ function CatLoadingScreen({ text }) {
         zIndex: 50,
         color: '#4ade80',
         fontFamily: 'monospace',
-        fontSize: '14px',
+        fontSize: '15px',
         whiteSpace: 'pre-line',
-        lineHeight: '1.6'
+        lineHeight: '1.8'
       }}>
         {text}
       </div>
 
-      {/* Boot Sequence */}
-      <div className="absolute top-4 left-4 text-xs z-20 w-full max-w-md" style={{ marginTop: '100px' }}>
-        {bootLines.map((line, i) => (
-          <div key={i} className="opacity-80 mb-1">
-            <span className="opacity-50">root@kali:~# </span>
-            {line}
-          </div>
-        ))}
-        <span className="opacity-80" style={{ animation: 'blink-cursor 0.8s step-end infinite' }}>█</span>
-      </div>
-
       {/* Main Particle Container */}
-      <div
-        className="absolute z-10 pointer-events-none select-none"
-        style={{
-          left: '50vw',
-          top: '50vh',
-          lineHeight: '1.2',
-          transition: 'text-shadow 0.5s ease, filter 0.5s ease',
-          ...(isFormed ? { animation: 'pulse-glow 2s ease-in-out infinite' } : {}),
-          ...glitchStyle
-        }}
-      >
+      <div style={{
+        position: 'absolute',
+        left: '50vw',
+        top: '50vh',
+        fontSize: '16px',
+        lineHeight: '1.4',
+        fontFamily: 'monospace',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        zIndex: 10,
+        transition: 'text-shadow 0.5s ease, filter 0.5s ease',
+        ...(isFormed ? { animation: 'cat-pulse-glow 2s ease-in-out infinite' } : {}),
+        ...glitchStyle
+      }}>
         {particles.map(p => (
-          <span
-            key={p.id}
-            className="absolute"
-            style={{
-              left: '0px',
-              top: '0px',
-              transform: `translate(calc(${p.renderX + offsetX}ch), calc(${p.renderY + offsetY}em))`,
-              willChange: 'transform'
-            }}
-          >
+          <span key={p.id} style={{
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+            transform: `translate(calc(${p.renderX + offsetX}ch), calc(${p.renderY + offsetY}em))`,
+            willChange: 'transform'
+          }}>
             {p.currentChar}
           </span>
         ))}
       </div>
 
       {/* Wandering Cursor */}
-      <div
-        className="absolute z-20 pointer-events-none text-lg font-bold"
-        style={{
-          left: '50vw',
-          top: '50vh',
-          transform: `translate(calc(${cursorPos.x}ch), calc(${cursorPos.y}em))`,
-          animation: 'blink-cursor 0.5s step-end infinite'
-        }}
-      >
-        _
-      </div>
+      <div style={{
+        position: 'absolute',
+        left: '50vw',
+        top: '50vh',
+        fontSize: '16px',
+        fontFamily: 'monospace',
+        transform: `translate(calc(${cursorPos.x}ch), calc(${cursorPos.y}em))`,
+        zIndex: 20,
+        pointerEvents: 'none',
+        fontWeight: 'bold',
+        animation: 'cat-blink 0.5s step-end infinite'
+      }}>_</div>
 
-      {/* Scanlines Overlay */}
-      <div className="pointer-events-none absolute inset-0 z-30"
-           style={{
-             background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
-             backgroundSize: '100% 4px'
-           }}
-      />
+      {/* Scanlines */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        pointerEvents: 'none', zIndex: 30,
+        background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
+        backgroundSize: '100% 4px'
+      }} />
 
-      {/* Vignette Overlay */}
-      <div className="pointer-events-none absolute inset-0 z-30"
-           style={{
-             background: 'radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%)'
-           }}
-      />
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        pointerEvents: 'none', zIndex: 30,
+        background: 'radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%)'
+      }} />
 
-      {/* TV Static Noise Overlay */}
-      <div className="pointer-events-none absolute inset-0 z-40 opacity-[0.03] mix-blend-overlay"
-           style={{
-             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-             backgroundSize: '256px 256px',
-             animation: 'noise-anim 0.2s steps(10) infinite'
-           }}
-      />
+      {/* TV Static */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        pointerEvents: 'none', zIndex: 40,
+        opacity: 0.03,
+        mixBlendMode: 'overlay',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        backgroundSize: '256px 256px',
+        animation: 'cat-noise 0.2s steps(10) infinite'
+      }} />
     </div>
   );
 }
@@ -1418,11 +1390,15 @@ export default function App() {
           setTimeout(type, 300);
         }
       } else {
-        setTimeout(() => setBooting(false), 500);
+        // typing done — do nothing; the 12s timer below handles dismissal
       }
     }
 
     type();
+
+    // Stay on loading screen for the full 12-second cat animation cycle
+    const bootTimer = setTimeout(() => setBooting(false), 12000);
+    return () => clearTimeout(bootTimer);
   }, []);
 
   const PageComponent = PAGE_COMPONENTS[active] || (() => (
