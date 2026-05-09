@@ -249,6 +249,16 @@ const CONFIG = {
           note: "Participated in the 24HR Hackathon under the Blockchain Track",
           certificate: "/smv-profile/certificates/ignitioncertificate.jpeg",
         },
+         {
+          id: "05",
+          title: "HackStreet 2K26 , Frontend AI Hackathon",
+          type: "COMPETITION",
+          org: "HackStreet",
+          date: "03-05-2026",
+          location: "Online",
+          note: "Participated in the 6 HR Online Hackathon , built a cryptocurrency analytics dashboard",
+          certificate: "/smv-profile/certificates/hackstreet2k26participationcert.png",
+        },
       ],
     },
     notes: {
