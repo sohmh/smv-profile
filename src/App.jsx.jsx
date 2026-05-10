@@ -28,6 +28,7 @@ const CONFIG = {
 
   // ── Updates log ──────────────────────────────────────────
   updates: [
+    { date: "12-4-2026", label: "NEW", text: "Started Building DriveLegal for IITM Road Safety Hackathon" },
     { date: "3-4-2026", label: "NEW", text: "Competed in my first hackathon - 24HR Ignition hackverse" },
     { date: "30-3-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
     { date: "30-3-2026", label: "IMP", text: "Website layout and Design is adapted from mariya.fyi " },
@@ -173,7 +174,8 @@ const CONFIG = {
           preview: [
             "Just registered for the IIT Madras Road Safety Hackathon",
             "Excited to work on an AI based solution for road safety",
-            "Will be updating this space with my progress"
+            "Will be updating this space with my progress",
+            "10.5.2026 - Got up to making a chatbot with Mistral running locally via Ollama, adding GPS features now"
           ],
         },
       ],
