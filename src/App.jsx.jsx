@@ -28,6 +28,7 @@ const CONFIG = {
 
   // ── Updates log ──────────────────────────────────────────
   updates: [
+    { date: "12-5-2026", label: "NEW", text: "Got Selected in GirlScript Summer of Code as a Contributor" },
     { date: "12-4-2026", label: "NEW", text: "Started Building DriveLegal for IITM Road Safety Hackathon" },
     { date: "3-4-2026", label: "NEW", text: "Competed in my first hackathon - 24HR Ignition hackverse" },
     { date: "30-3-2026", label: "NEW", text: "Launched personal website. You're looking at it." },
@@ -43,7 +44,7 @@ const CONFIG = {
       outputLines: [
         "[ OK ] Starting session – {smv}.fyi",
         "[ OK ] User profile loaded",
-        "[ INFO ] Last login: Mon Mar 30 2026 12:00:00 AM",
+        "[ INFO ] Last login: Mon Dec 25 2006 12:07:07 AM",
       ],
       // Paragraphs for smv about.txt
       bio: [
@@ -73,6 +74,15 @@ const CONFIG = {
       projects: [
         {
           id: "01",
+          title: "LockChain",
+          tags: ["dAPP"],
+          year: "2026-04",
+          status: "Built and live on my Github",
+          abstract: "a decentralized application which leverages blockchain technology to provide secure peer to peer transactions through escrow smart contracts.",
+          links: [{ label: "Demo", href: "https://merkle-mavericks-code.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
+        },
+        {
+          id: "02",
           title: "Finance Capital",
           tags: ["APP"],
           year: "2026-02",
@@ -81,7 +91,7 @@ const CONFIG = {
           links: [{ label: "Demo", href: "https://capital-finance-tracking-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Capital-Finance-Tracking-App" }],
         },
         {
-          id: "02",
+          id: "03",
           title: "Physique Log",
           tags: ["APP"],
           year: "2026-02",
@@ -90,7 +100,7 @@ const CONFIG = {
           links: [{ label: "Demo", href: "https://physique-log-application.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Physique-Log-Application" }],
         },
         {
-          id: "03",
+          id: "04",
           title: "Verdict",
           tags: ["APP"],
           year: "2026-02",
@@ -99,15 +109,7 @@ const CONFIG = {
           links: [{ label: "Demo", href: "https://verdict-routine-tracker-app.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/Verdict-Routine-Tracker-App" }],
         },
 
-        {
-          id: "04",
-          title: "LockChain",
-          tags: ["dAPP"],
-          year: "2026-04",
-          status: "Built and live on my Github",
-          abstract: "a decentralized application which leverages blockchain technology to provide secure peer to peer transactions through escrow smart contracts.",
-          links: [{ label: "Demo", href: "https://merkle-mavericks-code.vercel.app/" }, { label: "Github", href: "https://github.com/sohmh/MerkleMavericksCode" }],
-        },
+        
       ],
     },
     credentials: {
@@ -177,6 +179,18 @@ const CONFIG = {
             "Will be updating this space with my progress",
             "10.5.2026 - Got up to making a chatbot with Mistral running locally via Ollama, adding GPS features now"
           ],
+          {
+          id: "02",
+          title: "Gssoc 2026",
+          date: "12-5-2026",
+          slug: "gssoc_2026",
+          preview: [
+            "Just got selected for GSSoC 2026 with the Open Source For You Foundation",
+            "Will be contributing to open source projects for the next 3 months",
+            "Excited to learn and grow as a developer through this experience",
+            "This is my profile : <a href="https://gssoc.girlscript.org/profile/030846ad-2cf5-4457-b829-b718b9d950ee">GsSoC-Soham Gurav</a>"
+          ],
+        },
         },
       ],
     },
