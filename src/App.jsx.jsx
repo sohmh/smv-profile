@@ -179,7 +179,8 @@ const CONFIG = {
             "Will be updating this space with my progress",
             "10.5.2026 - Got up to making a chatbot with Mistral running locally via Ollama, adding GPS features now"
           ],
-          {
+        },
+        {
           id: "02",
           title: "Gssoc 2026",
           date: "12-5-2026",
@@ -188,10 +189,10 @@ const CONFIG = {
             "Just got selected for GSSoC 2026 with the Open Source For You Foundation",
             "Will be contributing to open source projects for the next 3 months",
             "Excited to learn and grow as a developer through this experience",
-            "This is my profile : <a href="https://gssoc.girlscript.org/profile/030846ad-2cf5-4457-b829-b718b9d950ee">GsSoC-Soham Gurav</a>"
+            "This is my profile : <a href='https://gssoc.girlscript.org/profile/030846ad-2cf5-4457-b829-b718b9d950ee'>GsSoC-Soham Gurav</a>",
           ],
         },
-        },
+        
       ],
     },
 
