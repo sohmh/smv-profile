@@ -189,7 +189,7 @@ const CONFIG = {
             "Just got selected for GSSoC 2026 with the Open Source For You Foundation",
             "Will be contributing to open source projects for the next 3 months",
             "Excited to learn and grow as a developer through this experience",
-            "This is my profile : <a href='https://gssoc.girlscript.org/profile/030846ad-2cf5-4457-b829-b718b9d950ee'>GsSoC-Soham Gurav</a>",
+            "This is my profile : https://gssoc.girlscript.org/profile/030846ad-2cf5-4457-b829-b718b9d950ee",
           ],
         },
         
