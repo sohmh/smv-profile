@@ -14,7 +14,7 @@ const CONFIG = {
 
   // ── Nav sections (order matters) ─────────────────────────
   // Each section must match a key in SECTIONS below
-  nav: ["about", "research", "credentials", "writings", "blog", "videos", "events", "notes", "contact"],
+  nav: ["about", "research", "credentials", "activity", "writings", "blog", "videos", "events", "notes", "contact"],
 
   // ── Social links ─────────────────────────────────────────
   links: [
@@ -295,6 +295,10 @@ const CONFIG = {
         },
       ],
     },
+    activity: {
+      title: "activity",
+      githubUsername: "sohmh",
+    },
     contact: {
       title: "contact",
       outputLines: [
@@ -352,6 +356,152 @@ const TAG_COLORS = {
 
 function tagColor(tag) {
   return TAG_COLORS[tag] || TAG_COLORS.DEFAULT;
+}
+
+// GitHub language colors (subset matching GitHub's official map)
+const LANG_COLORS = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  Python: "#3572A5",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  Java: "#b07219",
+  "C++": "#f34b7d",
+  C: "#555555",
+  "C#": "#178600",
+  Ruby: "#701516",
+  Go: "#00ADD8",
+  Rust: "#dea584",
+  Swift: "#F05138",
+  Kotlin: "#A97BFF",
+  Shell: "#89e051",
+  Vue: "#41b883",
+  Svelte: "#ff3e00",
+  PHP: "#4F5D95",
+  Dart: "#00B4AB",
+  Other: "#6b7280",
+};
+function langColor(lang) { return LANG_COLORS[lang] || LANG_COLORS.Other; }
+
+// ── GitHub Activity Hook ────────────────────────────────────
+const GH_CACHE_KEY = "gh_activity_cache";
+const GH_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function useGithubActivity(username) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastRefresh, setLastRefresh] = useState(null);
+
+  const fetchData = async (force = false) => {
+    if (!force) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(GH_CACHE_KEY) || "null");
+        if (cached && Date.now() - cached.ts < GH_CACHE_TTL && cached.username === username) {
+          setData(cached.data);
+          setLastRefresh(new Date(cached.ts));
+          setLoading(false);
+          return;
+        }
+      } catch (_) {}
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const headers = {};
+      // Fetch user, repos, events in parallel
+      const [userRes, reposRes, eventsRes, issuesCreatedRes, issuesAssignedRes, prsRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${username}`, { headers }),
+        fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`, { headers }),
+        fetch(`https://api.github.com/users/${username}/events/public?per_page=100`, { headers }),
+        fetch(`https://api.github.com/search/issues?q=author:${username}+type:issue&per_page=30`, { headers }),
+        fetch(`https://api.github.com/search/issues?q=assignee:${username}+type:issue&per_page=30`, { headers }),
+        fetch(`https://api.github.com/search/issues?q=author:${username}+type:pr&per_page=30`, { headers }),
+      ]);
+
+      if (!userRes.ok) throw new Error(`rate limit exceeded or user not found (${userRes.status})`);
+
+      const [user, repos, events, issuesCreated, issuesAssigned, prs] = await Promise.all([
+        userRes.json(), reposRes.json(), eventsRes.json(),
+        issuesCreatedRes.ok ? issuesCreatedRes.json() : { items: [] },
+        issuesAssignedRes.ok ? issuesAssignedRes.json() : { items: [] },
+        prsRes.ok ? prsRes.json() : { items: [] },
+      ]);
+
+      // Extract commits from push events
+      const commits = [];
+      for (const ev of (Array.isArray(events) ? events : [])) {
+        if (ev.type === "PushEvent" && ev.payload?.commits) {
+          for (const c of ev.payload.commits) {
+            commits.push({
+              sha: c.sha?.slice(0, 7) || "0000000",
+              message: c.message?.split("\n")[0] || "",
+              repo: ev.repo?.name || "",
+              date: ev.created_at,
+            });
+            if (commits.length >= 15) break;
+          }
+        }
+        if (commits.length >= 15) break;
+      }
+
+      // Compute total stars
+      const totalStars = (Array.isArray(repos) ? repos : []).reduce((s, r) => s + (r.stargazers_count || 0), 0);
+
+      // Commits this year: use events (rough estimate — events API only returns last 90 days public events)
+      const thisYear = new Date().getFullYear();
+      const commitsThisYear = (Array.isArray(events) ? events : []).reduce((sum, ev) => {
+        if (ev.type === "PushEvent" && ev.payload?.commits) {
+          const yr = new Date(ev.created_at).getFullYear();
+          if (yr === thisYear) return sum + ev.payload.commits.length;
+        }
+        return sum;
+      }, 0);
+
+      const openIssues = (issuesCreated.items || []).filter(i => i.state === "open").length;
+      const mergedPRs = (prs.items || []).filter(p => p.pull_request?.merged_at).length;
+
+      const result = {
+        user,
+        repos: Array.isArray(repos) ? repos : [],
+        commits,
+        issuesCreated: issuesCreated.items || [],
+        issuesAssigned: issuesAssigned.items || [],
+        prs: prs.items || [],
+        stats: {
+          repos: user.public_repos || 0,
+          stars: totalStars,
+          commitsThisYear,
+          openIssues,
+          mergedPRs,
+        },
+      };
+
+      const now = Date.now();
+      localStorage.setItem(GH_CACHE_KEY, JSON.stringify({ ts: now, username, data: result }));
+      setData(result);
+      setLastRefresh(new Date(now));
+    } catch (err) {
+      setError(err.message || "unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchData(); }, [username]);
+
+  return { data, loading, error, lastRefresh, refresh: () => fetchData(true) };
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
 }
 
 // ── Styles ──────────────────────────────────────────────────
@@ -633,6 +783,49 @@ const css = `
 
   /* Contact */
   .contact-block { border-left: 2px solid var(--border); padding-left: 20px; margin-bottom: 28px; line-height: 1.8; }
+
+  /* GitHub Activity */
+  .gh-stats-bar { border: 1px solid var(--border); padding: 12px 18px; margin-bottom: 24px; font-size: 12px; color: var(--text); display: flex; flex-wrap: wrap; gap: 0; }
+  .gh-stats-bar span { color: var(--green); }
+  .gh-stats-bar .sep { color: var(--text-dim); margin: 0 8px; }
+  .gh-section-title { color: var(--yellow); font-size: 12px; margin: 28px 0 12px; letter-spacing: 0.08em; }
+  .gh-tabs { display: flex; gap: 0; margin-bottom: 14px; }
+  .gh-tab { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font); font-size: 11px; padding: 5px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .gh-tab.active, .gh-tab:hover { color: var(--text-bright); border-color: #444; }
+  .gh-tab.active { border-bottom-color: var(--bg); }
+  .gh-commit-line { font-size: 11.5px; padding: 6px 0; border-bottom: 1px solid #1a1a1a; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .gh-commit-sha { color: var(--blue); min-width: 58px; }
+  .gh-commit-repo { color: var(--orange); }
+  .gh-commit-msg { color: var(--text); flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 400px; }
+  .gh-commit-time { color: var(--text-dim); font-size: 11px; white-space: nowrap; }
+  .gh-repo-card { border: 1px solid var(--border); margin-bottom: 6px; padding: 12px 16px; font-size: 12px; }
+  .gh-repo-name { color: var(--text-bright); font-size: 13px; font-weight: 500; }
+  .gh-repo-desc { color: var(--text-dim); margin: 4px 0 8px; font-size: 11.5px; }
+  .gh-repo-meta { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .gh-lang-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .gh-issue-row { font-size: 11.5px; padding: 7px 0; border-bottom: 1px solid #1a1a1a; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .gh-issue-num { color: var(--text-dim); min-width: 52px; }
+  .gh-issue-title { color: var(--text); flex: 1; }
+  .gh-issue-open { color: #4ade80; font-size: 10px; border: 1px solid #4ade80; padding: 1px 6px; }
+  .gh-issue-closed { color: #f87171; font-size: 10px; border: 1px solid #f87171; padding: 1px 6px; }
+  .gh-pr-merged { color: #a78bfa; font-size: 10px; border: 1px solid #a78bfa; padding: 1px 6px; }
+  .gh-pr-open { color: #4ade80; font-size: 10px; border: 1px solid #4ade80; padding: 1px 6px; }
+  .gh-pr-closed { color: #f87171; font-size: 10px; border: 1px solid #f87171; padding: 1px 6px; }
+  .gh-refresh-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font); font-size: 11px; padding: 5px 14px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .gh-refresh-btn:hover { color: var(--green); border-color: var(--green); }
+  .gh-error { color: #f87171; font-size: 12px; padding: 10px 0; }
+  .gh-loading { color: var(--text-dim); font-size: 12px; padding: 10px 0; }
+  .gh-refreshed { color: var(--text-dim); font-size: 11px; }
+  @media (max-width: 768px) {
+    .gh-stats-bar { font-size: 11px; padding: 10px 14px; }
+    .gh-commit-msg { max-width: 200px; }
+    .gh-repo-card { padding: 10px 12px; }
+  }
+  @media (max-width: 480px) {
+    .gh-stats-bar { font-size: 10px; padding: 8px 12px; }
+    .gh-commit-line { font-size: 10.5px; }
+    .gh-issue-row { font-size: 10.5px; }
+  }
 `;
 
 // ── Sub-components ───────────────────────────────────────────
@@ -1067,7 +1260,136 @@ function VideosPage() {
   );
 }
 
-const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, writings: WritingsPage, blog: BlogPage, videos: VideosPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
+function GitHubActivityPage() {
+  const username = CONFIG.sections.activity?.githubUsername || "sohmh";
+  const { data, loading, error, lastRefresh, refresh } = useGithubActivity(username);
+  const [issueTab, setIssueTab] = useState("created");
+
+  return (
+    <div>
+      <div className="cmd">
+        <div className="cmd-line">
+          <span className="dollar">$</span>
+          <span className="cmd-text">gh activity</span>
+          <span className="cmd-arg"> --user={username} --live</span>
+        </div>
+      </div>
+
+      {/* Refresh bar */}
+      <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px", flexWrap: "wrap" }}>
+        <button className="gh-refresh-btn" onClick={refresh} disabled={loading}>
+          $ refresh --github
+        </button>
+        {lastRefresh && (
+          <span className="gh-refreshed">last refreshed: {lastRefresh.toLocaleTimeString()}</span>
+        )}
+      </div>
+
+      {loading && <div className="gh-loading">&gt; fetching github data for @{username}...</div>}
+      {error && <div className="gh-error">ERROR: {error}</div>}
+
+      {data && (
+        <>
+          {/* ── Stats Bar ───────────────────────────────── */}
+          <div className="gh-stats-bar">
+            <span>repos:</span>&nbsp;<span style={{ color: "var(--text-bright)" }}>{data.stats.repos}</span>
+            <span className="sep">|</span>
+            <span>stars:</span>&nbsp;<span style={{ color: "var(--text-bright)" }}>{data.stats.stars}</span>
+            <span className="sep">|</span>
+            <span>commits/yr~:</span>&nbsp;<span style={{ color: "var(--text-bright)" }}>{data.stats.commitsThisYear}</span>
+            <span className="sep">|</span>
+            <span>open issues:</span>&nbsp;<span style={{ color: "var(--text-bright)" }}>{data.stats.openIssues}</span>
+            <span className="sep">|</span>
+            <span>merged PRs:</span>&nbsp;<span style={{ color: "var(--text-bright)" }}>{data.stats.mergedPRs}</span>
+          </div>
+
+          {/* ── Live Commits Feed ───────────────────────── */}
+          <div className="gh-section-title">[ COMMITS ] last 15 across public repos</div>
+          {data.commits.length === 0 && <div className="gh-loading">[ no recent push events found ]</div>}
+          {data.commits.map((c, i) => (
+            <div className="gh-commit-line" key={i}>
+              <span className="gh-commit-sha">[{c.sha}]</span>
+              <span className="gh-commit-repo">{c.repo.split("/")[1] || c.repo}</span>
+              <span style={{ color: "var(--text-dim)" }}>•</span>
+              <span className="gh-commit-msg" title={c.message}>{c.message}</span>
+              <span style={{ color: "var(--text-dim)" }}>•</span>
+              <span className="gh-commit-time">{timeAgo(c.date)}</span>
+            </div>
+          ))}
+
+          {/* ── Repositories Overview ───────────────────── */}
+          <div className="gh-section-title">[ REPOS ] public repositories</div>
+          {data.repos.slice(0, 20).map(r => (
+            <div className="gh-repo-card" key={r.id}>
+              <a href={r.html_url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <span className="gh-repo-name">{r.name}</span>
+              </a>
+              {r.description && <div className="gh-repo-desc">{r.description}</div>}
+              <div className="gh-repo-meta">
+                {r.language && (
+                  <span style={{ display: "flex", alignItems: "center", color: "var(--text-dim)", fontSize: "11px" }}>
+                    <span className="gh-lang-dot" style={{ background: langColor(r.language) }} />
+                    {r.language}
+                  </span>
+                )}
+                <span style={{ color: "var(--yellow)", fontSize: "11px" }}>★ {r.stargazers_count || 0}</span>
+                <span style={{ color: "var(--text-dim)", fontSize: "11px" }}>⑂ {r.forks_count || 0}</span>
+                <span style={{ color: "var(--text-dim)", fontSize: "11px" }}>updated {timeAgo(r.updated_at)}</span>
+              </div>
+            </div>
+          ))}
+
+          {/* ── Issues ──────────────────────────────────── */}
+          <div className="gh-section-title">[ ISSUES ]</div>
+          <div className="gh-tabs">
+            <button className={`gh-tab ${issueTab === "created" ? "active" : ""}`} onClick={() => setIssueTab("created")}>created by me</button>
+            <button className={`gh-tab ${issueTab === "assigned" ? "active" : ""}`} onClick={() => setIssueTab("assigned")}>assigned to me</button>
+          </div>
+          {(issueTab === "created" ? data.issuesCreated : data.issuesAssigned).map((issue, i) => (
+            <div className="gh-issue-row" key={i}>
+              <span className="gh-issue-num">#{issue.number}</span>
+              <a href={issue.html_url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <span className="gh-issue-title">{issue.title}</span>
+              </a>
+              <span className={issue.state === "open" ? "gh-issue-open" : "gh-issue-closed"}>{issue.state}</span>
+              {issue.labels?.slice(0, 2).map(l => (
+                <span key={l.id} style={{ fontSize: "10px", border: `1px solid #${l.color}`, color: `#${l.color}`, padding: "1px 5px" }}>{l.name}</span>
+              ))}
+              <span style={{ color: "var(--text-dim)", fontSize: "11px" }}>{timeAgo(issue.created_at)}</span>
+            </div>
+          ))}
+          {(issueTab === "created" ? data.issuesCreated : data.issuesAssigned).length === 0 && (
+            <div className="gh-loading">[ no {issueTab} issues found ]</div>
+          )}
+
+          {/* ── Pull Requests ────────────────────────────── */}
+          <div className="gh-section-title">[ PULL REQUESTS ] opened by me</div>
+          {data.prs.length === 0 && <div className="gh-loading">[ no pull requests found ]</div>}
+          {data.prs.map((pr, i) => {
+            const merged = !!pr.pull_request?.merged_at;
+            const state = merged ? "merged" : pr.state;
+            const badgeCls = merged ? "gh-pr-merged" : pr.state === "open" ? "gh-pr-open" : "gh-pr-closed";
+            return (
+              <div className="gh-issue-row" key={i}>
+                <span className="gh-issue-num">#{pr.number}</span>
+                <a href={pr.html_url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                  <span className="gh-issue-title">{pr.title}</span>
+                </a>
+                <span className={badgeCls}>{state}</span>
+                {merged && pr.pull_request?.merged_at && (
+                  <span style={{ color: "var(--text-dim)", fontSize: "11px" }}>merged {timeAgo(pr.pull_request.merged_at)}</span>
+                )}
+                <span style={{ color: "var(--text-dim)", fontSize: "11px" }}>{timeAgo(pr.created_at)}</span>
+              </div>
+            );
+          })}
+        </>
+      )}
+    </div>
+  );
+}
+
+const PAGE_COMPONENTS = { about: AboutPage, research: ResearchPage, credentials: CredentialsPage, activity: GitHubActivityPage, writings: WritingsPage, blog: BlogPage, videos: VideosPage, events: EventsPage, notes: NotesPage, contact: ContactPage };
 
 // ── CatLoadingScreen ─────────────────────────────────────────
 function CatLoadingScreen({ text }) {
