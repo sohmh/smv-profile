@@ -265,24 +265,30 @@ export const BLOG_CATEGORIES = [
 export const VIDEOS = [
   {
     id: "1",
-    title: "DriveLegal : A Road Safety Chatbot",
-    duration: "2:12",
-    youtubeId: "https://youtu.be/WV1UiILqcWk", // paste your YouTube video ID here
+    title: "IIT Madras CoERS Road Safety Hackathon Finals",
+    duration: "6:42",
+    youtubeId: "https://youtu.be/BsojqbPVORk", // paste your YouTube video ID here
   },
   {
     id: "2",
+    title: "DriveLegal : A Road Safety Chatbot",
+    duration: "2:12",
+    youtubeId: "https://youtu.be/WV1UiILqcWk", 
+  },
+  {
+    id: "3",
     title: "Validating the Ground Effect",
     duration: "2:18",
     youtubeId: "https://youtu.be/R6uJc3Jc2-Y",
   },
   {
-    id: "3",
+    id: "4",
     title: "LockChain : Escrow Based Secure Checkout System",
     duration: "6:42",
     youtubeId: "https://youtu.be/Hd92UBj7EZA",
   },
   {
-    id: "4",
+    id: "5",
     title: "Doppler Speed Detector",
     duration: "1:21",
     youtubeId: "https://youtu.be/YSIZyew5K6U",
@@ -290,9 +296,9 @@ export const VIDEOS = [
 ];
 
 export const FEATURED_VIDEO = {
-  title: "DriveLegal",
-  description: "The Submission that got us to the Final Round of the BIMSTEC Road Safety Hackathon IITM.",
-  youtubeId: "https://youtu.be/WV1UiILqcWk", // paste the featured video's YouTube ID here
+  title: "IIT Madras CoERS Road Safety Hackathon Finals",
+  description: "Explaining DriveLegal, the project that got us to the IITM CoERS Road Safety Hackathon Finals.",
+  youtubeId: "https://youtu.be/BsojqbPVORk", // paste the featured video's YouTube ID here
 };
 
 // =============================================================================
@@ -477,7 +483,10 @@ export const CONTACT = {
   linkedin: "/in/sohamgurav25", // LinkedIn slug e.g. /in/your-name
   twitter: "7smv25",            // Twitter/X handle — leave "" to hide
   medium: "https://medium.com/@esmvee2006",
-  leetcode: "sohmh",                  // ← add your LeetCode username here (used for heatmap)
+  leetcode: "sohmh",              // ← add your LeetCode username here (used for heatmap)
+  researchgate : "https://www.researchgate.net/profile/Soham-Gurav",
+  letterboxd : "https://letterboxd.com/sohmh/",
+  spotify : "https://open.spotify.com/user/31msgtkwdrv4ci62z6otf67kuaoe?si=2569090095054303"
 };
 
 // =============================================================================
