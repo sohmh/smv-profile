@@ -270,7 +270,12 @@ export default function App() {
           <Sidebar page={page} setPage={navigateTo} />
 
           <main className="main">
-            <ProfilePanel />
+                <div
+                  className={`profile-section${page === 'about' ? '' : ' profile-section--hidden'}`}
+                  aria-hidden={page !== 'about'}
+                >
+                  <ProfilePanel />
+                </div>
             <div className={`page-transition${isPageTransitioning ? ' page-transition--leaving' : ''}`}>
               <PageRenderer page={displayedPage} />
             </div>
