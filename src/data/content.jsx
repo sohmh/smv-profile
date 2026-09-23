@@ -468,10 +468,10 @@ export const EVENTS = {
 export const NOTES = [
 
    {
-     date: "2-4-26",
-     text: "Blockchain Basics.",
-     link: "",
-     tags: ["obsidian"],
+     date: "23-9-26",
+     text: "Web Scraping with Python.",
+     link: "https://github.com/sohmh/notes/tree/main/Web%20Scraping%20with%20Python%20-%20Duke%20University",
+     tags: ["Jupyter Notebook"],
    },
   // Add more notes here — they'll show up automatically
 ];
