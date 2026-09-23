@@ -1074,6 +1074,15 @@ body {
   max-height: 380px;
   overflow-y: auto;
 }
+.gh-tab-content,
+.gh-pr-list {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.gh-tab-content::-webkit-scrollbar,
+.gh-pr-list::-webkit-scrollbar {
+  display: none;
+}
 
 /* Commit list */
 .gh-list { display: flex; flex-direction: column; gap: 0; }

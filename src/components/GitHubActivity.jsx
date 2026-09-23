@@ -1,7 +1,6 @@
 // GitHubActivity.jsx
-// Uses GitHub Search API for commits, PRs, and issues — accurate counts
-// including private commits authored by the user (in public repo visibility).
-// Three sub-tabs: COMMITS · PULL REQUESTS · ISSUES
+// Uses GitHub Search API for pull requests and issues.
+// Two sub-tabs: PULL REQUESTS · ISSUES
 
 import { useState, useEffect } from 'react';
 
@@ -22,7 +21,7 @@ function repoLabel(htmlUrl, username) {
   } catch { return '?'; }
 }
 
-// ── shared row (commit / PR / Issue) ──────────────────────────────────────
+// ── shared row (PR / Issue) ───────────────────────────────────────────────
 function ItemRow({ href, date, repo, title }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="gh-pr-row">
@@ -40,38 +39,6 @@ function SubHeader({ label }) {
 
 function Empty({ msg = 'Nothing to show.' }) {
   return <div className="gh-empty">{msg}</div>;
-}
-
-// ── COMMITS TAB ────────────────────────────────────────────────────────────
-// Uses search/commits API — returns all public-repo commits by the author.
-function CommitsTab({ commits, totalCommits, username }) {
-  if (!commits.length) {
-    return (
-      <Empty msg="No public commits found. Private repo commits aren't accessible without auth." />
-    );
-  }
-  return (
-    <div className="gh-list">
-      {commits.map(c => {
-        const repo  = repoLabel(c.html_url, username);
-        const msg   = c.commit.message.split('\n')[0];
-        const date  = fmtDate(c.commit.author?.date || c.commit.committer?.date);
-        const short = msg.length > 90 ? msg.slice(0, 90) + '…' : msg;
-        return (
-          <ItemRow
-            key={c.sha}
-            href={c.html_url}
-            date={date}
-            repo={repo}
-            title={short}
-          />
-        );
-      })}
-      <div className="gh-list-note">
-        Showing {commits.length} of {totalCommits} commits in public repos (newest first).
-      </div>
-    </div>
-  );
 }
 
 // ── PULL REQUESTS TAB ──────────────────────────────────────────────────────
@@ -169,7 +136,7 @@ export default function GitHubActivity({ username: raw }) {
 
   const [data,   setData]   = useState(null);
   const [status, setStatus] = useState('loading');
-  const [tab,    setTab]    = useState('commits');
+  const [tab,    setTab]    = useState('prs');
 
   useEffect(() => {
     if (!username) return;
@@ -179,12 +146,6 @@ export default function GitHubActivity({ username: raw }) {
       fetch(`${BASE}/users/${username}`).then(r => r.json()),
       // Repos → total stars
       fetch(`${BASE}/users/${username}/repos?per_page=100&sort=updated`).then(r => r.json()),
-      // Commits via search API — far more reliable than events API
-      // The Accept header ensures the commits search endpoint responds properly
-      fetch(
-        `${BASE}/search/commits?q=author:${username}&sort=author-date&order=desc&per_page=100`,
-        { headers: { 'Accept': 'application/vnd.github.cloak-preview+json' } }
-      ).then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
       // Merged PRs
       fetch(`${BASE}/search/issues?q=author:${username}+type:pr+is:merged&sort=created&order=desc&per_page=50`)
         .then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
@@ -195,13 +156,11 @@ export default function GitHubActivity({ username: raw }) {
       fetch(`${BASE}/search/issues?q=author:${username}+type:issue&sort=updated&order=desc&per_page=40`)
         .then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
     ])
-      .then(([prof, rps, commitData, merged, openPRs, issues]) => {
+      .then(([prof, rps, merged, openPRs, issues]) => {
         if (prof.message) { setStatus('error'); return; }
         setData({
           profile:       prof,
           totalStars:    (Array.isArray(rps) ? rps : []).reduce((a, r) => a + r.stargazers_count, 0),
-          commits:       commitData.items       || [],
-          commitTotal:   commitData.total_count || 0,
           mergedPRs:     merged.items           || [],
           mergedTotal:   merged.total_count     || 0,
           openPRs:       openPRs.items          || [],
@@ -224,12 +183,10 @@ export default function GitHubActivity({ username: raw }) {
   }
 
   const {
-    profile, totalStars, commits, commitTotal,
-    mergedPRs, mergedTotal, openPRs, openTotal, issues, issuesTotal,
+    profile, totalStars, mergedPRs, mergedTotal, openPRs, openTotal, issues, issuesTotal,
   } = data;
 
   const TABS = [
-    { id: 'commits', label: `COMMITS (${commitTotal})` },
     { id: 'prs',     label: `PULL REQUESTS (${mergedTotal + openTotal})` },
     { id: 'issues',  label: `ISSUES (${issuesTotal})` },
   ];
@@ -241,7 +198,6 @@ export default function GitHubActivity({ username: raw }) {
         {[
           { label: 'Repos',      val: profile.public_repos },
           { label: 'Stars',      val: totalStars           },
-          { label: 'Commits',    val: commitTotal          },
           { label: 'PRs Merged', val: mergedTotal          },
           { label: 'PRs Open',   val: openTotal            },
           { label: 'Issues',     val: issuesTotal          },
@@ -269,9 +225,6 @@ export default function GitHubActivity({ username: raw }) {
 
       {/* Tab content */}
       <div className="gh-tab-content">
-        {tab === 'commits' && (
-          <CommitsTab commits={commits} totalCommits={commitTotal} username={username} />
-        )}
         {tab === 'prs' && (
           <PRsTab
             mergedPRs={mergedPRs} openPRs={openPRs}
