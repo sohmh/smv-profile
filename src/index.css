@@ -30,21 +30,21 @@
 }
 
 [data-theme="dark"] {
-  --bg:          #050705;
+  --bg:          #080808;
   --bezel:       #000000;
-  --screen:      #081008;
-  --panel:       #0a130a;
-  --panel-alt:   #0d1a0d;
-  --text:        #3dff77;
-  --text-dim:    #4a6e58;
+  --screen:      #111111;
+  --panel:       #181818;
+  --panel-alt:   #222222;
+  --text:        #eeeeee;
+  --text-dim:    #9a9a9a;
   --border:      rgba(255,255,255,0.2);
-  --accent-bg:   #3dff77;
-  --accent-text: #04150a;
+  --accent-bg:   #eeeeee;
+  --accent-text: #111111;
   --shadow:      none;
   --glow:        none;
-  --medium-btn:  #02b875;
+  --medium-btn:  #bdbdbd;
   --entry-btn:   rgba(255,255,255,0.15);
-  --gh-0: #0d1117; --gh-1: #0e4429; --gh-2: #006d32; --gh-3: #26a641; --gh-4: #39d353;
+  --gh-0: #202020; --gh-1: #4a4a4a; --gh-2: #707070; --gh-3: #999999; --gh-4: #d0d0d0;
   --lc-0: #0d1117; --lc-1: #3d2800; --lc-2: #7d4e00; --lc-3: #bd7400; --lc-4: #ffa500;
 }
 
@@ -1311,6 +1311,10 @@ body {
   .panel { padding: 12px; }
   .main { padding: 12px; }
   .event-gallery { aspect-ratio: 16 / 10; }
+  .profile-section:not(.profile-section--hidden) {
+    max-height: none;
+    overflow: visible;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1346,6 +1350,12 @@ body {
   .sysmsg .msg { padding: 9px 10px; font-size: 11px; }
   .loading-screen__logo { gap: 8px; transform: scale(.82); }
   .loading-screen__label, .loading-screen__prompt { font-size: 10px; }
+}
+
+[data-theme="dark"] .project-badge--shipped,
+[data-theme="dark"] .form-status--success,
+[data-theme="dark"] .lc-stat--easy {
+  color: #bdbdbd;
 }
 
 /* ── RETRO POINTERS ───────────────────────────────────────── */
