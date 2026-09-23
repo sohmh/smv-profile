@@ -351,15 +351,22 @@ export const CREDENTIALS = {
 // =============================================================================
 export const CERTIFICATES = [
    {
+     title:  "Web Scraping with Python",
+     issuer: "Duke University + Coursera",
+     date:   "September 2026",
+     file:   "Webscraping.pdf",    // file in public/certificates/
+     link:   "https://www.coursera.org/account/accomplishments/verify/QHY8RB157T33", // external verify URL
+   },
+   {
      title:  "Python",
-     issuer: "Coursera / DeepLearning.AI",
+     issuer: "Kaggle",
      date:   "April 2026",
      file:   "PythonKaggle.png",    // file in public/certificates/
      link:   "https://www.kaggle.com/learn/certification/sohamguravsmv/python", // external verify URL
    },
    {
      title:  "AI Essentials",
-     issuer: "Google",
+     issuer: "Google + Coursera",
      date:   "December 2025",
      file:   "GoogleAIEss.pdf",    // file in public/certificates/
      link:   "https://www.credly.com/badges/cb2859ff-82d4-4930-a378-6b806e27a603/linked_in_profile", // external verify URL

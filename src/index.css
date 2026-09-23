@@ -1347,3 +1347,21 @@ body {
   .loading-screen__logo { gap: 8px; transform: scale(.82); }
   .loading-screen__label, .loading-screen__prompt { font-size: 10px; }
 }
+
+/* ── RETRO POINTERS ───────────────────────────────────────── */
+body {
+  cursor: url('/images/retro-cursor.svg') 1 1, auto;
+}
+
+button,
+a,
+[role="button"],
+.list-item--clickable {
+  cursor: url('/images/retro-pointer.svg') 8 2, pointer;
+}
+
+input,
+textarea,
+select {
+  cursor: text;
+}
