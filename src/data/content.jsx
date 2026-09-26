@@ -65,7 +65,7 @@ export const ABOUT = {
       - Participated in my first college hackathon during freshman year, developing an end to end blockchain based escrow system.
       - Contributed to open source through GSSoC 2026, with 7 pull requests merged across 3 projects and a global rank of 287 in the first few weeks.
       - Lead a 4 member team to the IIT Madras CoeRS Road Safety Hackathon Finals on campus, being one of the 21 teams that were selected out of 6200 submissions.
-      When I'm not phasing out trying to understand, break and build things,you'll find me watching movies and documentaries, sketching, and probably playing a sport once in a while.
+      When I'm not trying to understand, break and build things,you'll find me watching movies and documentaries, sketching, and probably playing a sport once in a while.
       I love talking to people and learning from them so if you've built or found out about something new, I'd love to hear it out.
       I'm always open for project collaborations, research opportunities, internships and intellectual discussions. 
       Reach out if you're building something that requires more than one kind of thinking.
