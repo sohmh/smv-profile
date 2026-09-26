@@ -52,18 +52,24 @@ export const ABOUT = {
   body: [
     {
       title: "Hi, I'm Soham.",
-      text: `I'm someone who's particularly inquisitive and is apprehensive of the idea of picking a lane. So I don't.
-I spend my time studying and working across multiple interests, not out of indecision, but because the most interesting problems rarely fit inside one discipline. 
-I'm building towards research at the intersection of machine learning & the physical world, 
-with detours through studying numerical methods, debating, writing, participating in hackathons and whatever unsolved problem I stumble into next.
-Reach out if you're building something that requires more than one kind of thinking.`,
-    },
-    {
-      title: "What I'm doing now",
-      text: `Right now, I am : 
-- Building depth in Python & Linear Algebra, 
-- Studying the basics of numerical methods. 
-- Building Random Projects that come to my mind.`,
+      text: `I'm a deeply curious individual, throughout my entire life my thoughts have centered around the 'what?, how? and why?' behind literally everything.
+      This trait has made me someone who questions everything, tinkers with and breaks things just to spend my entire day rebuilding them while completely losing track of time.
+      I'm of the opinion that the beauty is entirely in the process, and results are byproducts and we should do things for the love of doing them and contributing to the world, not because of some roadmap towards a result
+      Because I'm particularly inquisitive and apprehensive of the idea of picking a lane, I spend my time studying and working across multiple interests, not out of indecision, but because the most interesting problems rarely fit inside one discipline.
+      I'm most interested in research at the intersection of machine learning & the physical world, working with detours through computational physics, mathematics, writing, hackathons and whatever unsolved problem I stumble into next.
+      
+      Here are some of the things I've done (that at least I think are worth noting) :
+      - As a kid, rescued and cared for injured birds, cats, and other animals in my surroundings, reflecting my deep commitment to animal welfare.
+      - Wrote scripts for school assembly talks, hosted the annual sports event, and earned multiple awards for sketching in school.
+      - Built physics and electronics projects, including one validating the ground tunnel effect and shared explanations of them on my YouTube channel.
+      - Participated in my first college hackathon during freshman year, developing an end to end blockchain based escrow system.
+      - Contributed to open source through GSSoC 2026, with 7 pull requests merged across 3 projects and a global rank of 287 in the first few weeks.
+      - Lead a 4 member team to the IIT Madras CoeRS Road Safety Hackathon Finals on campus, being one of the 21 teams that were selected out of 6200 submissions.
+      When I'm not phasing out trying to understand, break and build things,you'll find me watching movies and documentaries, sketching, and probably playing a sport once in a while.
+      I love talking to people and learning from them so if you've built or found out about something new, I'd love to hear it out.
+      I'm always open for project collaborations, research opportunities, internships and intellectual discussions. 
+      Reach out if you're building something that requires more than one kind of thinking.
+      `,
     },
   ],
 
