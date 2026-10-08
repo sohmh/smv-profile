@@ -1,172 +1,51 @@
 // GitHubActivity.jsx
-// Uses GitHub Search API for pull requests and issues.
-// Two sub-tabs: PULL REQUESTS · ISSUES
+// Profile stats + contribution heatmap (last year).
+// Calendar data: https://github-contributions-api.jogruber.de (community proxy; CORS-enabled)
 
 import { useState, useEffect } from 'react';
 
-// ── helpers ────────────────────────────────────────────────────────────────
 const stripAt = s => s?.replace(/^@/, '') || '';
 
-function fmtDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: '2-digit', day: '2-digit', year: '2-digit',
-  });
-}
+const GITHUB_API = 'https://api.github.com';
+const CONTRIB_API = 'https://github-contributions-api.jogruber.de/v4';
 
-function repoLabel(htmlUrl, username) {
-  try {
-    const [owner, repo] = htmlUrl.replace('https://github.com/', '').split('/');
-    return owner.toLowerCase() === username.toLowerCase() ? repo : `${owner}/${repo}`;
-  } catch { return '?'; }
-}
-
-// ── shared row (PR / Issue) ───────────────────────────────────────────────
-function ItemRow({ href, date, repo, title }) {
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="gh-pr-row">
-      <span className="gh-pr-date">{date}</span>
-      <span className="gh-pr-repo">{repo}</span>
-      <span className="gh-pr-title">{title}</span>
-      <span className="gh-pr-arrow">↗</span>
-    </a>
+function padWeeks(contributions) {
+  const padded = [...contributions];
+  const rem = padded.length % 7;
+  if (rem !== 0) {
+    const last = padded[padded.length - 1]?.date;
+    for (let i = 0; i < 7 - rem; i += 1) {
+      padded.push({ date: `${last}-pad-${i}`, count: 0, level: 0, pad: true });
+    }
+  }
+  const weekCount = padded.length / 7;
+  return Array.from({ length: weekCount }, (_, wi) =>
+    padded.slice(wi * 7, wi * 7 + 7),
   );
 }
-
-function SubHeader({ label }) {
-  return <div className="gh-sub-section">{label}</div>;
-}
-
-function Empty({ msg = 'Nothing to show.' }) {
-  return <div className="gh-empty">{msg}</div>;
-}
-
-// ── PULL REQUESTS TAB ──────────────────────────────────────────────────────
-function PRsTab({ mergedPRs, openPRs, mergedTotal, openTotal, username }) {
-  return (
-    <div>
-      <SubHeader label={`MERGED  (${mergedTotal})`} />
-      {!mergedPRs.length
-        ? <Empty msg="No merged PRs found." />
-        : (
-          <div className="gh-pr-list">
-            {mergedPRs.map(pr => (
-              <ItemRow
-                key={pr.id}
-                href={pr.html_url}
-                date={fmtDate(pr.pull_request?.merged_at || pr.closed_at)}
-                repo={repoLabel(pr.html_url, username)}
-                title={pr.title}
-              />
-            ))}
-          </div>
-        )
-      }
-      <SubHeader label={`OPEN  (${openTotal})`} />
-      {!openPRs.length
-        ? <Empty msg="No open PRs." />
-        : (
-          <div className="gh-pr-list">
-            {openPRs.map(pr => (
-              <ItemRow
-                key={pr.id}
-                href={pr.html_url}
-                date={fmtDate(pr.created_at)}
-                repo={repoLabel(pr.html_url, username)}
-                title={pr.title}
-              />
-            ))}
-          </div>
-        )
-      }
-    </div>
-  );
-}
-
-// ── ISSUES TAB ─────────────────────────────────────────────────────────────
-function IssuesTab({ issues, issuesTotal, username }) {
-  const open   = issues.filter(i => i.state === 'open');
-  const closed = issues.filter(i => i.state === 'closed');
-  return (
-    <div>
-      <SubHeader label={`OPEN  (${open.length})`} />
-      {!open.length
-        ? <Empty msg="No open issues found." />
-        : (
-          <div className="gh-pr-list">
-            {open.map(issue => (
-              <ItemRow
-                key={issue.id}
-                href={issue.html_url}
-                date={fmtDate(issue.created_at)}
-                repo={repoLabel(issue.html_url, username)}
-                title={issue.title}
-              />
-            ))}
-          </div>
-        )
-      }
-      <SubHeader label={`CLOSED  (${closed.length})`} />
-      {!closed.length
-        ? <Empty msg="No recently closed issues." />
-        : (
-          <div className="gh-pr-list">
-            {closed.map(issue => (
-              <ItemRow
-                key={issue.id}
-                href={issue.html_url}
-                date={fmtDate(issue.closed_at || issue.updated_at)}
-                repo={repoLabel(issue.html_url, username)}
-                title={issue.title}
-              />
-            ))}
-          </div>
-        )
-      }
-      <div className="gh-list-note">Showing recent {issues.length} of {issuesTotal} total issues.</div>
-    </div>
-  );
-}
-
-// ── MAIN COMPONENT ─────────────────────────────────────────────────────────
-const BASE = 'https://api.github.com';
 
 export default function GitHubActivity({ username: raw }) {
   const username = stripAt(raw);
 
-  const [data,   setData]   = useState(null);
+  const [data, setData] = useState(null);
   const [status, setStatus] = useState('loading');
-  const [tab,    setTab]    = useState('prs');
 
   useEffect(() => {
     if (!username) return;
 
     Promise.all([
-      // Profile
-      fetch(`${BASE}/users/${username}`).then(r => r.json()),
-      // Repos → total stars
-      fetch(`${BASE}/users/${username}/repos?per_page=100&sort=updated`).then(r => r.json()),
-      // Merged PRs
-      fetch(`${BASE}/search/issues?q=author:${username}+type:pr+is:merged&sort=created&order=desc&per_page=50`)
-        .then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
-      // Open PRs
-      fetch(`${BASE}/search/issues?q=author:${username}+type:pr+is:open&sort=created&order=desc&per_page=20`)
-        .then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
-      // Issues
-      fetch(`${BASE}/search/issues?q=author:${username}+type:issue&sort=updated&order=desc&per_page=40`)
-        .then(r => r.json()).catch(() => ({ items: [], total_count: 0 })),
+      fetch(`${GITHUB_API}/users/${username}`).then(r => r.json()),
+      fetch(`${GITHUB_API}/users/${username}/repos?per_page=100&sort=updated`).then(r => r.json()),
+      fetch(`${CONTRIB_API}/${username}?y=last`).then(r => r.json()),
     ])
-      .then(([prof, rps, merged, openPRs, issues]) => {
+      .then(([prof, rps, cal]) => {
         if (prof.message) { setStatus('error'); return; }
+        if (!Array.isArray(cal?.contributions)) { setStatus('error'); return; }
         setData({
-          profile:       prof,
-          totalStars:    (Array.isArray(rps) ? rps : []).reduce((a, r) => a + r.stargazers_count, 0),
-          mergedPRs:     merged.items           || [],
-          mergedTotal:   merged.total_count     || 0,
-          openPRs:       openPRs.items          || [],
-          openTotal:     openPRs.total_count    || 0,
-          issues:        issues.items           || [],
-          issuesTotal:   issues.total_count     || 0,
+          profile: prof,
+          totalStars: (Array.isArray(rps) ? rps : []).reduce((a, r) => a + r.stargazers_count, 0),
+          contributions: cal.contributions,
+          lastYearTotal: cal.total?.lastYear ?? cal.contributions.reduce((a, d) => a + d.count, 0),
         });
         setStatus('ok');
       })
@@ -182,26 +61,18 @@ export default function GitHubActivity({ username: raw }) {
     );
   }
 
-  const {
-    profile, totalStars, mergedPRs, mergedTotal, openPRs, openTotal, issues, issuesTotal,
-  } = data;
-
-  const TABS = [
-    { id: 'prs',     label: `PULL REQUESTS (${mergedTotal + openTotal})` },
-    { id: 'issues',  label: `ISSUES (${issuesTotal})` },
-  ];
+  const { profile, totalStars, contributions, lastYearTotal } = data;
+  const weeks = padWeeks(contributions);
+  const inPeriod = contributions.reduce((a, d) => a + d.count, 0);
 
   return (
     <div className="gh-activity">
-      {/* Stats row */}
       <div className="gh-stats">
         {[
-          { label: 'Repos',      val: profile.public_repos },
-          { label: 'Stars',      val: totalStars           },
-          { label: 'PRs Merged', val: mergedTotal          },
-          { label: 'PRs Open',   val: openTotal            },
-          { label: 'Issues',     val: issuesTotal          },
-          { label: 'Followers',  val: profile.followers    },
+          { label: 'Repos',         val: profile.public_repos },
+          { label: 'Stars',         val: totalStars },
+          { label: 'Contributions', val: lastYearTotal },
+          { label: 'Followers',     val: profile.followers },
         ].map(({ label, val }) => (
           <div key={label} className="gh-stat">
             <span className="gh-stat-val">{val}</span>
@@ -210,31 +81,27 @@ export default function GitHubActivity({ username: raw }) {
         ))}
       </div>
 
-      {/* Sub-tab navigation */}
-      <div className="gh-tabs">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            className={`gh-tab-btn${tab === t.id ? ' active' : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab content */}
-      <div className="gh-tab-content">
-        {tab === 'prs' && (
-          <PRsTab
-            mergedPRs={mergedPRs} openPRs={openPRs}
-            mergedTotal={mergedTotal} openTotal={openTotal}
-            username={username}
-          />
-        )}
-        {tab === 'issues' && (
-          <IssuesTab issues={issues} issuesTotal={issuesTotal} username={username} />
-        )}
+      <div className="heatmap-section">
+        <div className="heatmap-label">
+          Commits &amp; contributions &mdash; last {weeks.length} weeks &middot; {inPeriod} in view
+        </div>
+        <div className="heatmap-grid">
+          {weeks.map((week, wi) => (
+            <div key={wi} className="heatmap-week">
+              {week.map(day => (
+                <div
+                  key={day.date}
+                  className={`heatmap-cell gh-cell--${day.level ?? 0}`}
+                  title={
+                    day.pad
+                      ? ''
+                      : `${day.date}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`
+                  }
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
