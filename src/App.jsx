@@ -23,6 +23,7 @@ const NAV_SIDE = [
   { id: 'videos',      icon: '▶', label: 'Videos'     },
   { id: 'events',      icon: '◆', label: 'Events'     },
   { id: 'notes',       icon: '□', label: 'Notes'      },
+  { id: 'gallery',    icon: '▧', label: 'Gallery'    },
 ];
 
 // ── helpers ────────────────────────────────────────────────────────────────

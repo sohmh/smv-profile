@@ -75,7 +75,7 @@ export const ABOUT = {
 
   // Tags shown on the right panel
   skills: [
-    "Python", "C++", "NumPy",
+    "Python", "C++", "NumPy", "Java", "Arduino", "Scrapy", "FastAPI",
     "Agentic AI", "Technical Writing", "MathJax", "LaTeX",
     "CLI Tools", "Research", "Prompt Engineering"
   ],
@@ -212,6 +212,15 @@ export const PROJECTS = [
   },
   // Add more projects here — they render automatically
 ];
+
+// Skills displayed in the right-side panel on the Projects page.
+// Add or remove items in each array to update the visible lists.
+export const PROJECT_SKILLS = {
+  languages: ["Python", "C++", "Java", "Arduino"],
+  technologiesFrameworks: ["NumPy", "Scrapy", "FastAPI", "Arduino", "Agentic AI", "Docker", "Qdrant", "FAISS", "Python Poetry", "RAG"],
+  developerTools: ["Git", "GitHub", "CLI Tools", "Android Studio", "Vercel", "Supabase", "Docker", "Cloudflare", "VSCode", "Eclipse IDE", "FireBase", "Jupyter Notebooks"],
+  others: ["Technical Writing", "LaTeX", "MathJax"],
+};
 
 // =============================================================================
 //  EXPERIENCE

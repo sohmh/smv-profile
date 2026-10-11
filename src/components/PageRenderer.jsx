@@ -8,10 +8,11 @@ import BlogEntry      from './BlogEntry.jsx';
 import VideoEntry     from './VideoEntry.jsx';
 import GitHubActivity from './GitHubActivity.jsx';
 import LeetCodeHeatmap from './LeetCodeHeatmap.jsx';
+import GALLERY from '../data/gallery.js';
 
 import {
   ABOUT, BLOG_POSTS,
-  PROJECTS, EXPERIENCES, UPDATES,
+  PROJECTS, PROJECT_SKILLS, EXPERIENCES, UPDATES,
   VIDEOS, FEATURED_VIDEO,
   CREDENTIALS, CERTIFICATES,
   EVENTS, NOTES,
@@ -296,6 +297,12 @@ function ProjectModal({ project, onClose }) {
 function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState(null);
   const closeProject = () => setSelectedProject(null);
+  const skillGroups = [
+    { title: 'LANGUAGES', tags: PROJECT_SKILLS.languages },
+    { title: 'TECHNOLOGIES / FRAMEWORKS', tags: PROJECT_SKILLS.technologiesFrameworks },
+    { title: 'DEVELOPER TOOLS', tags: PROJECT_SKILLS.developerTools },
+    { title: 'OTHERS', tags: PROJECT_SKILLS.others },
+  ];
 
   return (
     <>
@@ -305,8 +312,15 @@ function ProjectsPage() {
           : PROJECTS.map(p => <ProjectCard key={p.id} p={p} onReadMore={setSelectedProject} />)
         }
       </Panel>
-      <Panel title="SKILLS">
-        <TagList tags={ABOUT.skills} />
+      <Panel title="SKILLS" className="project-skills-panel">
+        <div className="project-skill-groups">
+          {skillGroups.map(group => (
+            <section className="project-skill-group" key={group.title}>
+              <h3>{group.title}</h3>
+              <TagList tags={group.tags} />
+            </section>
+          ))}
+        </div>
       </Panel>
       {selectedProject && <ProjectModal project={selectedProject} onClose={closeProject} />}
     </>
@@ -651,6 +665,17 @@ function EventGallery() {
 }
 
 function EventsPage() {
+  const [preview, setPreview] = useState(null);
+
+  useEffect(() => {
+    if (!preview) return undefined;
+    const onKeyDown = event => {
+      if (event.key === 'Escape') setPreview(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [preview]);
+
   return (
     <>
       <Panel title="UPCOMING & PAST EVENTS">
@@ -665,14 +690,13 @@ function EventsPage() {
             {(e.file || e.link) && (
               <div className="cert-actions">
                 {e.file && (
-                  <a
-                    href={`/certificates/${e.file}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setPreview({ title: `${e.title} Certificate`, file: e.file })}
                     className="entry-btn"
                   >
-                    View Certificate ↗
-                  </a>
+                    View Certificate
+                  </button>
                 )}
                 {e.link && (
                   <a
@@ -692,6 +716,23 @@ function EventsPage() {
       <Panel title="EVENT GALLERY">
         <EventGallery />
       </Panel>
+      {preview && (
+        <div className="certificate-preview" role="presentation" onMouseDown={event => {
+          if (event.target === event.currentTarget) setPreview(null);
+        }}>
+          <section className="certificate-preview__dialog" role="dialog" aria-modal="true" aria-label={preview.title}>
+            <header className="certificate-preview__header">
+              <div className="certificate-preview__title">{preview.title}</div>
+              <button type="button" className="certificate-preview__close" onClick={() => setPreview(null)} aria-label="Close certificate preview">×</button>
+            </header>
+            {/\.(png|jpe?g|gif|webp|svg)$/i.test(preview.file) ? (
+              <img className="certificate-preview__image" src={`/certificates/${preview.file}`} alt={preview.title} />
+            ) : (
+              <iframe className="certificate-preview__document" src={`/certificates/${preview.file}`} title={preview.title} />
+            )}
+          </section>
+        </div>
+      )}
     </>
   );
 }
@@ -725,6 +766,136 @@ function NotesPage() {
   );
 }
 
+function GalleryPage() {
+  const [dimensions, setDimensions] = useState({});
+  const [failedImages, setFailedImages] = useState([]);
+  const [dimensionsReady, setDimensionsReady] = useState(GALLERY.length === 0);
+  const [galleryWidth, setGalleryWidth] = useState(760);
+  const galleryRef = useRef(null);
+  const imageViewerRef = useRef(null);
+  const viewerImageRef = useRef(null);
+  const viewerCaptionRef = useRef(null);
+  const viewerCloseRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (GALLERY.length === 0) {
+      setDimensionsReady(true);
+      return undefined;
+    }
+    setDimensionsReady(false);
+    const imageDimensions = {};
+    const failed = [];
+    Promise.all(GALLERY.map(entry => new Promise(resolve => {
+      const probe = new Image();
+      probe.onload = () => {
+        imageDimensions[entry.src] = { width: probe.naturalWidth, height: probe.naturalHeight };
+        resolve();
+      };
+      probe.onerror = () => {
+        failed.push(entry.src);
+        resolve();
+      };
+      probe.src = entry.src;
+    }))).then(() => {
+      if (cancelled) return;
+      setDimensions(imageDimensions);
+      setFailedImages(failed);
+      setDimensionsReady(true);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const available = GALLERY.filter(entry => dimensions[entry.src] && !failedImages.includes(entry.src));
+
+  useEffect(() => {
+    const node = galleryRef.current;
+    if (!node) return undefined;
+    const observer = new ResizeObserver(entries => {
+      const nextWidth = entries[0]?.contentRect.width;
+      if (nextWidth) setGalleryWidth(nextWidth);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [dimensionsReady, available.length]);
+
+  const closeImageViewer = () => {
+    imageViewerRef.current?.classList.remove('is-open');
+    triggerRef.current?.focus();
+  };
+
+  const openImageViewer = (entry, event) => {
+    if (!imageViewerRef.current || !viewerImageRef.current || !viewerCaptionRef.current) return;
+    triggerRef.current = event.currentTarget;
+    viewerImageRef.current.src = entry.src;
+    viewerImageRef.current.alt = entry.alt;
+    viewerCaptionRef.current.textContent = entry.alt;
+    imageViewerRef.current.classList.add('is-open');
+    viewerCloseRef.current?.focus();
+  };
+
+  useEffect(() => {
+    const onKeyDown = event => {
+      if (event.key === 'Escape' && imageViewerRef.current?.classList.contains('is-open')) closeImageViewer();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const rows = [];
+  const width = galleryWidth;
+  const gap = 8;
+  const targetHeight = 190;
+  let row = [];
+  let ratioSum = 0;
+  available.forEach((entry, index) => {
+    row.push({ entry, index });
+    ratioSum += dimensions[entry.src].width / dimensions[entry.src].height;
+    if ((ratioSum + (row.length - 1) * gap / targetHeight) * targetHeight >= width) {
+      rows.push({ items: row, height: (width - (row.length - 1) * gap) / ratioSum });
+      row = [];
+      ratioSum = 0;
+    }
+  });
+  if (row.length) rows.push({ items: row, height: targetHeight });
+
+  return (
+    <Panel title="GALLERY" className="gallery-panel">
+      <p className="gallery-intro">a small corner for pictures i like. nothing curated, nothing technical, just frames i liked enough to keep.</p>
+      {!dimensionsReady ? (
+        <div className="gallery-empty">Loading pictures…</div>
+      ) : available.length === 0 ? (
+        <div className="gallery-empty">nothing here yet</div>
+      ) : (
+        <div className="gallery-collage" ref={galleryRef}>
+          {rows.map((galleryRow, rowIndex) => (
+            <div className="gallery-row" key={`row-${rowIndex}`} style={{ height: `${galleryRow.height}px` }}>
+              {galleryRow.items.map(({ entry, index }) => (
+                <button
+                  className="gallery-photo"
+                  key={`${entry.src}-${index}`}
+                  type="button"
+                  style={{ aspectRatio: `${dimensions[entry.src].width} / ${dimensions[entry.src].height}` }}
+                  onClick={event => openImageViewer(entry, event)}
+                  aria-label={`View photo: ${entry.alt}`}
+                >
+                  <img src={entry.src} alt={entry.alt} loading="lazy" />
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+      <div ref={imageViewerRef} className="project-image-viewer gallery-image-viewer" role="dialog" aria-modal="true" aria-label="Gallery image preview" onClick={closeImageViewer}>
+        <button ref={viewerCloseRef} className="project-image-viewer__close" type="button" aria-label="Close image preview" onClick={closeImageViewer}>×</button>
+        <img ref={viewerImageRef} alt="" onClick={event => event.stopPropagation()} />
+        <div ref={viewerCaptionRef} className="project-image-viewer__caption" />
+      </div>
+    </Panel>
+  );
+}
+
 // ── routing map ────────────────────────────────────────────────────────────
 const PAGE_MAP = {
   about:       <AboutPage />,
@@ -737,6 +908,7 @@ const PAGE_MAP = {
   videos:      <VideosPage />,
   events:      <EventsPage />,
   notes:       <NotesPage />,
+  gallery:     <GalleryPage />,
 };
 
 export default function PageRenderer({ page }) {
