@@ -2,8 +2,9 @@
 // You should not need to edit this file for content changes.
 // To add new nav items, add entries to NAV_TOP or NAV_SIDE below.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import PageRenderer from './components/PageRenderer.jsx';
+import RoomScene from './components/RoomScene.jsx';
 import { PROFILE, STATS, SYSTEM_MESSAGE, STATUS_BAR } from './data/content.jsx';
 
 // ── navigation config ──────────────────────────────────────────────────────
@@ -11,10 +12,12 @@ const NAV_TOP = [
   { id: 'about',   label: 'About'   },
   { id: 'blog',    label: 'Blog'    },
   { id: 'contact', label: 'Contact' },
+  { id: 'resume',  label: 'Resume', href: '/SohamSandeepGuravResume.pdf', download: true },
 ];
 
 const NAV_SIDE = [
   { id: 'projects',     icon: '◈', label: 'Projects'    },
+  { id: 'experience',  icon: '◷', label: 'Experience'  },
   { id: 'credentials', icon: '◉', label: 'Credentials' },
   { id: 'activity',    icon: '●', label: 'Activity'    },
   { id: 'videos',      icon: '▶', label: 'Videos'     },
@@ -54,25 +57,30 @@ function useUptime() {
   return uptime;
 }
 
-const THEMES = ['light', 'dark', 'sepia'];
-
 // ── sub-components ─────────────────────────────────────────────────────────
 function Titlebar({ clock }) {
   return (
     <div className="titlebar">
-      <div className="left">
-        smv portfolio : ver.25.12.06
+      <div className="titlebar-dots" aria-hidden="true">
+        <span className="titlebar-dot titlebar-dot--red" />
+        <span className="titlebar-dot titlebar-dot--yellow" />
+        <span className="titlebar-dot titlebar-dot--green" />
       </div>
-      <div className="right" id="clock">{clock}</div>
+      <div className="titlebar-version">ver.25.12.06</div>
+      <div className="right titlebar-clock" id="clock">{clock}</div>
     </div>
   );
 }
 
-function Menubar({ page, setPage, theme, setTheme }) {
+function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
   return (
     <div className="menubar">
       <nav className="menu-items" aria-label="Top navigation">
-        {NAV_TOP.map(({ id, label }) => (
+        {NAV_TOP.map(({ id, label, href, download }) => href ? (
+          <a key={id} id={`nav-top-${id}`} href={href} download={download ? '' : undefined}>
+            {label}
+          </a>
+        ) : (
           <button
             key={id}
             id={`nav-top-${id}`}
@@ -84,17 +92,22 @@ function Menubar({ page, setPage, theme, setTheme }) {
           </button>
         ))}
       </nav>
-      <div className="theme-toggle" role="group" aria-label="Theme selector">
-        {THEMES.map(t => (
-          <button
-            key={t}
-            id={`theme-${t}`}
-            className={`theme-dot theme-dot--${t}${theme === t ? ' active' : ''}`}
-            onClick={() => setTheme(t)}
-            title={t.charAt(0).toUpperCase() + t.slice(1)}
-            aria-label={`${t} theme`}
-          />
-        ))}
+      <div className="theme-toggle">
+        <button className="screen-fullscreen" type="button" onClick={toggleFullscreen} aria-label="Toggle screen fullscreen" title="Toggle fullscreen">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
+        </button>
+        <button
+          id="theme-toggle"
+          className={`theme-switch${theme === 'dark' ? ' theme-switch--dark' : ''}`}
+          type="button"
+          role="switch"
+          aria-checked={theme === 'dark'}
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          title={`Theme: ${theme}`}
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          <span className="theme-switch__thumb" />
+        </button>
       </div>
     </div>
   );
@@ -103,10 +116,6 @@ function Menubar({ page, setPage, theme, setTheme }) {
 function Sidebar({ page, setPage }) {
   return (
     <aside className="sidebar" aria-label="Side navigation">
-      <div className="brand">
-        <div className="glyph">&#9635;</div>
-        <div className="name">TERMINAL</div>
-      </div>
       <nav className="nav">
         {NAV_SIDE.map(({ id, icon, label }) => (
           <button
@@ -195,15 +204,45 @@ function Statusbar({ uptime }) {
 
 // ── root App ───────────────────────────────────────────────────────────────
 export default function App() {
+  const screenRef = useRef(null);
   const [page, setPage]   = useState('about');
   const [displayedPage, setDisplayedPage] = useState('about');
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoaderLeaving, setIsLoaderLeaving] = useState(false);
   const pageTransitionTimer = useRef(null);
-  const [theme, setTheme] = useState(() => localStorage.getItem('smv-theme') || 'light');
+  const sceneTransitionTimer = useRef(null);
+  const [sceneChanging, setSceneChanging] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('smv-theme') === 'dark' ? 'dark' : 'light');
   const clock  = useClock();
   const uptime = useUptime();
+
+  useLayoutEffect(() => {
+    const assembly = document.querySelector('.monitor-assembly');
+    if (!assembly) return undefined;
+    const resize = () => {
+      const width = document.documentElement.clientWidth;
+      const height = document.documentElement.clientHeight;
+      const scale = window.matchMedia('(max-width: 699px)').matches
+        ? 1
+        : Math.min((height * 0.84) / 900, (width * 0.76) / 1160);
+      assembly.style.setProperty('--crt-scale', String(scale));
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    const screen = screenRef.current;
+    if (!screen) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (screen.requestFullscreen) await screen.requestFullscreen();
+    } catch (error) {
+      console.warn('Fullscreen could not be opened.', error);
+    }
+  };
 
   // Apply theme to <html>
   useEffect(() => {
@@ -211,7 +250,47 @@ export default function App() {
     localStorage.setItem('smv-theme', theme);
   }, [theme]);
 
-  useEffect(() => () => window.clearTimeout(pageTransitionTimer.current), []);
+  useEffect(() => {
+    let lastTouchY = 0;
+    const scroller = () => document.querySelector('.content-scroll');
+    const forwardWheel = (event) => {
+      if (window.matchMedia('(max-width: 699px)').matches) return;
+      if (event.target.closest?.('.content-scroll, .project-modal__details, .project-modal__gallery')) return;
+      const target = scroller();
+      if (!target || !event.deltaY) return;
+      event.preventDefault();
+      target.scrollTop += event.deltaY;
+    };
+    const rememberTouch = (event) => { lastTouchY = event.touches[0]?.clientY ?? lastTouchY; };
+    const forwardTouch = (event) => {
+      if (window.matchMedia('(max-width: 699px)').matches) return;
+      if (event.target.closest?.('.content-scroll, .project-modal__details, .project-modal__gallery')) return;
+      const target = scroller();
+      const currentY = event.touches[0]?.clientY ?? lastTouchY;
+      if (target) { event.preventDefault(); target.scrollTop += lastTouchY - currentY; }
+      lastTouchY = currentY;
+    };
+    window.addEventListener('wheel', forwardWheel, { passive: false });
+    window.addEventListener('touchstart', rememberTouch, { passive: true });
+    window.addEventListener('touchmove', forwardTouch, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', forwardWheel);
+      window.removeEventListener('touchstart', rememberTouch);
+      window.removeEventListener('touchmove', forwardTouch);
+    };
+  }, []);
+
+  useEffect(() => () => {
+    window.clearTimeout(pageTransitionTimer.current);
+    window.clearTimeout(sceneTransitionTimer.current);
+  }, []);
+
+  const changeTheme = (nextTheme) => {
+    setTheme(nextTheme);
+    setSceneChanging(true);
+    window.clearTimeout(sceneTransitionTimer.current);
+    sceneTransitionTimer.current = window.setTimeout(() => setSceneChanging(false), 1700);
+  };
 
   useEffect(() => {
     const exitTimer = window.setTimeout(() => setIsLoaderLeaving(true), 1600);
@@ -236,7 +315,10 @@ export default function App() {
   };
 
   return (
-    <div className="monitor">
+    <>
+    <RoomScene theme={theme} changing={sceneChanging} />
+    <div className="monitor-assembly">
+      <div className="monitor">
       {isLoading && (
         <div className={`loading-screen${isLoaderLeaving ? ' loading-screen--leaving' : ''}`} role="status" aria-label="Loading portfolio">
           <div className="loading-screen__content">
@@ -262,10 +344,11 @@ export default function App() {
           </div>
         </div>
       )}
-      <div className="screen">
+      <div className="screen" ref={screenRef}>
         <Titlebar clock={clock} />
-        <Menubar page={page} setPage={navigateTo} theme={theme} setTheme={setTheme} />
+        <Menubar page={page} setPage={navigateTo} theme={theme} setTheme={changeTheme} toggleFullscreen={toggleFullscreen} />
 
+        <div className="content-scroll">
         <div className="body-grid">
           <Sidebar page={page} setPage={navigateTo} />
 
@@ -282,9 +365,15 @@ export default function App() {
             <SysMsg />
           </main>
         </div>
+        </div>
 
         <Statusbar uptime={uptime} />
       </div>
+      </div>
+      <div className="monitor-seam" aria-hidden="true" />
+      <div className="monitor-vents" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/><i/><i/></div>
+      <div className="monitor-stand" aria-hidden="true"><div className="stand-neck"/><div className="stand-base"/></div>
     </div>
+    </>
   );
 }

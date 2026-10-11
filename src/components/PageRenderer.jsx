@@ -2,7 +2,8 @@
 // Reads content.jsx data and renders two-panel layouts for each page.
 // To add a new page: create a component below and add it to PAGE_MAP.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import BlogEntry      from './BlogEntry.jsx';
 import VideoEntry     from './VideoEntry.jsx';
 import GitHubActivity from './GitHubActivity.jsx';
@@ -10,7 +11,7 @@ import LeetCodeHeatmap from './LeetCodeHeatmap.jsx';
 
 import {
   ABOUT, BLOG_POSTS,
-  PROJECTS, UPDATES,
+  PROJECTS, EXPERIENCES, UPDATES,
   VIDEOS, FEATURED_VIDEO,
   CREDENTIALS, CERTIFICATES,
   EVENTS, NOTES,
@@ -18,9 +19,9 @@ import {
 } from '../data/content.jsx';
 
 // ── shared primitives ──────────────────────────────────────────────────────
-function Panel({ title, children }) {
+function Panel({ title, children, className = '' }) {
   return (
-    <div className="panel">
+    <div className={`panel${className ? ` ${className}` : ''}`}>
       <div className="panel-title">{title}</div>
       {children}
     </div>
@@ -158,11 +159,8 @@ function AboutPage() {
   );
 }
 
-// ── ProjectCard — expandable project entry ──────────────────────────────────
-function ProjectCard({ p }) {
-  const [open, setOpen] = useState(false);
-  const hasDetails = p.details && p.details.trim().length > 0;
-
+// ── ProjectCard — opens the full project window ─────────────────────────────
+function ProjectCard({ p, onReadMore }) {
   return (
     <div className="entry">
       {/* Header: title + status badge */}
@@ -187,25 +185,9 @@ function ProjectCard({ p }) {
         </div>
       )}
 
-      {/* Expand toggle — only renders when details text is present */}
-      {hasDetails && (
-        <button
-          className="project-expand-btn"
-          onClick={() => setOpen(o => !o)}
-          aria-expanded={open}
-        >
-          {open ? '▲ less' : '▼ details'}
-        </button>
-      )}
-
-      {/* Extended description — shown only when open */}
-      {hasDetails && open && (
-        <div className="project-details">
-          {p.details.trim().split('\n\n').map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
-      )}
+      <button className="project-expand-btn" onClick={() => onReadMore(p)}>
+        Read more
+      </button>
 
       {/* GitHub / Live links */}
       {(p.github || p.link) && (
@@ -226,18 +208,107 @@ function ProjectCard({ p }) {
   );
 }
 
+function ProjectModal({ project, onClose }) {
+  const closeRef = useRef(null);
+  const [activeImage, setActiveImage] = useState(null);
+  const images = (project.images || []).filter(Boolean).map(image => (
+    typeof image === 'string' ? { src: image, alt: project.title } : image
+  ));
+  const sections = [
+    ['WHY I MADE IT', project.whyMade || project.description],
+    ['WHAT WAS MY CONTRIBUTION', project.contribution],
+    ['HOW IT WORKS', project.howItWorks],
+    ['WHAT I LEARNT', project.whatILearnt || project.details],
+  ];
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        if (activeImage !== null) setActiveImage(null);
+        else onClose();
+      }
+    };
+    closeRef.current?.focus();
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose, activeImage]);
+
+  const host = document.querySelector('.screen');
+  if (!host) return null;
+
+  return createPortal(
+    <div className="project-modal-layer">
+      <section className="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+        <header className="project-modal__header">
+          <div>
+            <div className="project-modal__eyebrow">PROJECT FILE</div>
+            <h2 id="project-modal-title">{project.title}</h2>
+          </div>
+          <button ref={closeRef} className="project-modal__close" type="button" onClick={onClose} aria-label="Close project details">×</button>
+        </header>
+        <div className="project-modal__body">
+          <div className="project-modal__details">
+            {sections.map(([title, text]) => (
+              <section className="project-modal__section" key={title}>
+                <h3>{title}</h3>
+                {text?.trim()
+                  ? <p>{text}</p>
+                  : <p className="project-modal__placeholder">Add this section to the project entry in <code>src/data/content.jsx</code>.</p>}
+              </section>
+            ))}
+            {(project.github || project.link) && (
+              <div className="project-modal__links">
+                {project.github && <a className="entry-btn" href={project.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>}
+                {project.link && <a className="entry-btn" href={project.link} target="_blank" rel="noopener noreferrer">Live ↗</a>}
+              </div>
+            )}
+          </div>
+          <aside className="project-modal__gallery" aria-label={`${project.title} image gallery`}>
+            <h3>PROJECT GALLERY</h3>
+            {images.length
+              ? <div className="project-modal__images">
+                  {images.map((image, index) => (
+                    <figure className="project-modal__image" key={`${image.src}-${index}`}>
+                      <button className="project-modal__image-button" type="button" onClick={() => setActiveImage(index)} aria-label={`View ${image.alt || `${project.title} photo ${index + 1}`} larger`}>
+                        <img src={image.src} alt={image.alt || `${project.title} photo ${index + 1}`} />
+                        {image.caption && <span className="project-modal__image-caption">{image.caption}</span>}
+                      </button>
+                    </figure>
+                  ))}
+                </div>
+              : <div className="project-modal__gallery-empty">Add project photos to <code>public/images/projects/</code>, then list their paths in this project's <code>images</code> array in <code>src/data/content.jsx</code>.</div>}
+          </aside>
+        </div>
+        <footer className="project-modal__footer">SMV-90 · PROJECT ARCHIVE</footer>
+        {activeImage !== null && (
+          <div className="project-image-viewer" role="dialog" aria-modal="true" aria-label="Project image preview" onClick={() => setActiveImage(null)}>
+            <button className="project-image-viewer__close" type="button" aria-label="Close image preview" onClick={() => setActiveImage(null)}>×</button>
+            <img src={images[activeImage].src} alt={images[activeImage].alt || `${project.title} photo ${activeImage + 1}`} onClick={event => event.stopPropagation()} />
+            {images[activeImage].caption && <div className="project-image-viewer__caption">{images[activeImage].caption}</div>}
+          </div>
+        )}
+      </section>
+    </div>,
+    host,
+  );
+}
+
 function ProjectsPage() {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const closeProject = () => setSelectedProject(null);
+
   return (
     <>
       <Panel title="PROJECTS">
         {PROJECTS.length === 0
           ? <div className="entry-excerpt">No projects yet — add entries to PROJECTS in content.jsx.</div>
-          : PROJECTS.map(p => <ProjectCard key={p.id} p={p} />)
+          : PROJECTS.map(p => <ProjectCard key={p.id} p={p} onReadMore={setSelectedProject} />)
         }
       </Panel>
       <Panel title="SKILLS">
         <TagList tags={ABOUT.skills} />
       </Panel>
+      {selectedProject && <ProjectModal project={selectedProject} onClose={closeProject} />}
     </>
   );
 }
@@ -245,11 +316,107 @@ function ProjectsPage() {
 
 function BlogPage() {
   return (
-    <Panel title="BLOG POSTS">
+    <Panel title="BLOG POSTS" className="blog-page-panel">
       {BLOG_POSTS.map(post => (
         <BlogEntry key={post.id} post={post} />
       ))}
     </Panel>
+  );
+}
+
+function ExperienceModal({ experience, onClose }) {
+  const closeRef = useRef(null);
+  const [activeImage, setActiveImage] = useState(null);
+  const images = (experience.images || []).filter(Boolean).map(image => (
+    typeof image === 'string' ? { src: image, alt: `${experience.organization} experience` } : image
+  ));
+
+  useEffect(() => {
+    const closeOnEscape = event => {
+      if (event.key !== 'Escape') return;
+      if (activeImage !== null) setActiveImage(null);
+      else onClose();
+    };
+    closeRef.current?.focus();
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose, activeImage]);
+
+  const host = document.querySelector('.screen');
+  if (!host) return null;
+
+  return createPortal(
+    <div className="project-modal-layer" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <section className="project-modal" role="dialog" aria-modal="true" aria-labelledby="experience-modal-title">
+        <header className="project-modal__header">
+          <div>
+            <div className="project-modal__eyebrow">EXPERIENCE FILE</div>
+            <h2 id="experience-modal-title">{experience.role}</h2>
+            <div className="experience-modal__organization">{experience.organization} · {experience.period}</div>
+          </div>
+          <button ref={closeRef} className="project-modal__close" type="button" onClick={onClose} aria-label="Close experience details">×</button>
+        </header>
+        <div className="project-modal__body">
+          <div className="project-modal__details">
+            <section className="project-modal__section">
+              <h3>WHAT I DID</h3>
+              <p>{experience.description}</p>
+            </section>
+          </div>
+          <aside className="project-modal__gallery" aria-label={`${experience.organization} image gallery`}>
+            <h3>EXPERIENCE GALLERY</h3>
+            {images.length
+              ? <div className="project-modal__images">{images.map((image, index) => (
+                  <figure className="project-modal__image" key={`${image.src}-${index}`}>
+                    <button className="project-modal__image-button" type="button" onClick={() => setActiveImage(index)} aria-label={`View ${image.alt || `${experience.organization} photo ${index + 1}`} larger`}>
+                      <img src={image.src} alt={image.alt || `${experience.organization} photo ${index + 1}`} />
+                      {image.caption && <span className="project-modal__image-caption">{image.caption}</span>}
+                    </button>
+                  </figure>
+                ))}</div>
+              : <div className="experience-gallery-placeholder">
+                  <div className="experience-gallery-placeholder__frame" aria-hidden="true">＋</div>
+                  <p>Image placeholder</p>
+                  <small>Add photos under <code>public/images/experience/</code>, then list their paths in this experience&apos;s <code>images</code> array in <code>src/data/content.jsx</code>.</small>
+                </div>}
+          </aside>
+        </div>
+        <footer className="project-modal__footer">SMV-90 · EXPERIENCE ARCHIVE</footer>
+        {activeImage !== null && (
+          <div className="project-image-viewer" role="dialog" aria-modal="true" aria-label="Experience image preview" onClick={() => setActiveImage(null)}>
+            <button className="project-image-viewer__close" type="button" aria-label="Close image preview" onClick={() => setActiveImage(null)}>×</button>
+            <img src={images[activeImage].src} alt={images[activeImage].alt || `${experience.organization} photo ${activeImage + 1}`} onClick={event => event.stopPropagation()} />
+            {images[activeImage].caption && <div className="project-image-viewer__caption">{images[activeImage].caption}</div>}
+          </div>
+        )}
+      </section>
+    </div>,
+    host,
+  );
+}
+
+function ExperiencePage() {
+  const [selectedExperience, setSelectedExperience] = useState(null);
+  const closeExperience = () => setSelectedExperience(null);
+  return (
+    <>
+      <Panel title="EXPERIENCE TIMELINE" className="experience-page-panel">
+        {EXPERIENCES.length === 0
+          ? <div className="entry-excerpt">Add experience entries to EXPERIENCES in content.jsx.</div>
+          : <div className="experience-timeline">{EXPERIENCES.map((experience, index) => (
+              <button className="experience-timeline__item" type="button" key={experience.id} onClick={() => setSelectedExperience(experience)}>
+                <span className="experience-timeline__marker" aria-hidden="true">{index + 1}</span>
+                <span className="experience-timeline__copy">
+                  <span className="experience-timeline__period">{experience.period}</span>
+                  <span className="experience-timeline__role">{experience.role}</span>
+                  <span className="experience-timeline__org">{experience.organization}</span>
+                </span>
+                <span className="experience-timeline__arrow" aria-hidden="true">↗</span>
+              </button>
+            ))}</div>}
+      </Panel>
+      {selectedExperience && <ExperienceModal experience={selectedExperience} onClose={closeExperience} />}
+    </>
   );
 }
 
@@ -319,6 +486,17 @@ function ContactPage() {
 }
 
 function CredentialsPage() {
+  const [preview, setPreview] = useState(null);
+
+  useEffect(() => {
+    if (!preview) return undefined;
+    const onKeyDown = event => {
+      if (event.key === 'Escape') setPreview(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [preview]);
+
   return (
     <>
       {/* LEFT: Education + legacy cert entries */}
@@ -360,14 +538,13 @@ function CredentialsPage() {
               )}
               <div className="cert-actions">
                 {cert.file && (
-                  <a
-                    href={`/certificates/${cert.file}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setPreview({ title: cert.title, file: cert.file })}
                     className="entry-btn"
                   >
-                    View Certificate ↗
-                  </a>
+                    View Certificate
+                  </button>
                 )}
                 {cert.link && (
                   <a
@@ -387,6 +564,23 @@ function CredentialsPage() {
         <div style={{ fontSize: 10, color: 'var(--text-dim)', letterSpacing: '.4px', marginBottom: 6 }}>STACK</div>
         <TagList tags={CREDENTIALS.stack} />
       </Panel>
+      {preview && (
+        <div className="certificate-preview" role="presentation" onMouseDown={event => {
+          if (event.target === event.currentTarget) setPreview(null);
+        }}>
+          <section className="certificate-preview__dialog" role="dialog" aria-modal="true" aria-label={preview.title}>
+            <header className="certificate-preview__header">
+              <div className="certificate-preview__title">{preview.title}</div>
+              <button type="button" className="certificate-preview__close" onClick={() => setPreview(null)} aria-label="Close certificate preview">×</button>
+            </header>
+            {/\.(png|jpe?g|gif|webp|svg)$/i.test(preview.file) ? (
+              <img className="certificate-preview__image" src={`/certificates/${preview.file}`} alt={preview.title} />
+            ) : (
+              <iframe className="certificate-preview__document" src={`/certificates/${preview.file}`} title={preview.title} />
+            )}
+          </section>
+        </div>
+      )}
     </>
   );
 }
@@ -537,6 +731,7 @@ const PAGE_MAP = {
   blog:        <BlogPage />,
   contact:     <ContactPage />,
   projects:    <ProjectsPage />,
+  experience:  <ExperiencePage />,
   credentials: <CredentialsPage />,
   activity:    <ActivityPage />,
   videos:      <VideosPage />,

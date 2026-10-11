@@ -87,8 +87,11 @@ export const ABOUT = {
 //  ─ `status`  : "Shipped" | "In Progress" | "Local" | "Archived"
 //  ─ `github`  : full GitHub URL (or "" to hide button)
 //  ─ `link`    : live/demo URL  (or "" to hide button)
-//  ─ `details` : Extended description shown in a dropdown.
-//                Use \n\n for paragraph breaks. Leave "" to hide the toggle.
+//  ─ `whyMade`, `contribution`, `howItWorks`, `whatILearnt`: project story sections.
+//  ─ `images`  : Ordered gallery entries. Use a path string or
+//                { src, alt, caption }. Put files in public/images/projects/.
+//                Example: images: ["/images/projects/my-project/overview.jpg"]
+//  ─ `details` : Legacy extended notes, used as the fallback for `whatILearnt`.
 // =============================================================================
 export const PROJECTS = [
   {
@@ -99,7 +102,15 @@ export const PROJECTS = [
     status: "Local",
     github: "https://github.com/sohmh/DriveLegal",
     link: "",
-    details: "My role: I designed and built the core of DriveLegal myself before the final-round submission: the RAG system, the choice of a local model, and the full end-to-end pipeline. During that stage, my teammates fed me the traffic rule data. After we were selected for the finals, one teammate added JWT auth, leaderboards, a larger database, and dark/light mode, while two others collected a much larger set of traffic rule data from the internet. I handled everything else. 1. How Retrieval Augmented Generation (RAG) works (surface-level understanding): The data for the rules (PDFs from official government sites) had its text extracted, split into chunks, and converted into numerical arrays called vector embeddings. The user's query is also converted into a vector, and the system finds the closest matching chunks. Those chunks are passed as context to the LLM to generate an answer. I chose RAG because I didn't want a hallucinating chatbot. I'd love to study the math behind all of this and build a system like it from scratch, without AI assistance, in the future. 2. Choosing the right database for the job: I used a vector store to search the legal documents, but a JSON dataset for the challan calculator, because fine amounts are exact, not approximate. Knowing which storage solution fits which job is important in system design. 3. Running AI models locally: When OpenAI API credits werent available, I learned how to swap to a locally run model (Mistral) using Ollama.", // ← paste your extended write-up here
+    whyMade: "I registered for the IIT Madras Road Safety Hackathon along with three of my friends, picked a problem statement I liked.",
+    contribution: "I designed and built everything : the RAG system, chose the local model, and built the end-to-end pipeline (while my teammates provided me with traffic rule data) and then I submitted the project code, made a ppt and a youtube video demo for the first round and that got us selected for the finals. After selection, I handled the remaining core work while my teammate anurag added authentication, leaderboards, a larger database, and shambhuraje and sanskar fetched more traffic-rule data for the database.",
+    howItWorks: "Official traffic-rule PDFs are extracted and split into chunks. The chunks are embedded and stored in Qdrant. A user's question is embedded too; the closest matching chunks are retrieved and passed to the language model as context. The challan calculator uses exact JSON data instead of vector search.",
+    images: [
+      "/images/projects/drvlgl1.png",
+      "/images/projects/drvlgl2.png",
+      "/images/projects/drvlgl3.png",
+    ],
+    details: " Here's some things I learnt : 1. How Retrieval Augmented Generation (RAG) works (surface-level understanding): The data for the rules (PDFs from official government sites) had its text extracted, split into chunks, and converted into numerical arrays called vector embeddings. The user's query is also converted into a vector, and the system finds the closest matching chunks. Those chunks are passed as context to the LLM to generate an answer. I chose RAG because I didn't want a hallucinating chatbot. I'd love to study the math behind all of this and build a system like it from scratch, without AI assistance, in the future. 2. Choosing the right database for the job: I used a vector store to search the legal documents, but a JSON dataset for the challan calculator, because fine amounts are exact, not approximate. Knowing which storage solution fits which job is important in system design. 3. Running AI models locally: When OpenAI API credits werent available, I learned how to swap to a locally run model (Mistral) using Ollama.", // ← paste your extended write-up here
   },
   {
     id: "prod2",
@@ -109,6 +120,15 @@ export const PROJECTS = [
     status: "Shipped",
     github: "https://github.com/sohmh/MerkleMavericksCode",
     link: "https://merkle-mavericks-code.vercel.app/",
+    whyMade: "Made as a submission in the 24 Hours of the Ignition Hackathon",
+    howItWorks: "The project explores a checkout flow that protects both sides of a transaction by holding payment in escrow until the agreed conditions are met. It is a Solidity escrow contract deployed on Remix IDE which coordinates the buyer, seller, and release conditions. The React and Web3 interface connects wallets (used MetaMask) and listens for contract events; Firebase stores application state that does not belong on chain.",
+    images: [
+     "/images/projects/lckchain1.png",
+     "/images/projects/lckchain2.png",
+     "/images/projects/lckchain3.png",
+     "/images/projects/lckchain4.png",
+     "/images/projects/lckchain5.png",
+    ],
     details: "I studied the basic conceptual architecture behind blockchain technology. 1.Smart contracts : self executing code which enforces agreements between roles without intermediary. The escrow pattern used three roles and one contract. , 2.Block hash chaining : why blockchain data is effectively immutable. Each block has the hash of the one before it and tampering with one hence breaks the entire chain as all hashes are lost successively. 3. Consensus & voting systems : how decentralized netowkrs agree on a state without an authority., 4. Web3 frontend plumbing : wallets, testnets, event listeners and why an offchain state (we used firebase) is still necessary for things the ssmart contract can't handle ", // ← paste your extended write-up here
   },
   {
@@ -119,6 +139,18 @@ export const PROJECTS = [
     status: "Built",
     github: "https://github.com/sohmh/Ground-Effect-Validation",
     link: "https://youtu.be/R6uJc3Jc2-Y?si=P8ameIWsBr50hFYW",
+    whyMade: "I wanted to test the ground-effect pressure drop behind race-car aerodynamics using both a physical model and a simulation.",
+    contribution: "I modeled the tunnel in TinkerCad, then built a cardboard prototype with my teammate Akhilesh. Then I set up the inlet, outlet, mesh, and CFD run in SimScale.",
+    howItWorks: "The narrowed tunnel throat accelerates airflow and lowers pressure as a fan pulls air through the cardboard model and the tissue paper attached above a slit in the narrow part gets sucked in, while the SimScale CFD run visualizes the same flow and pressure change governed by the ground tunnel effecct ",
+    images: [
+      "/images/projects/grndef1.png",
+      "/images/projects/grndef2.png",
+      "/images/projects/grndef3.png",
+      "/images/projects/grndef4.png",
+      "/images/projects/grndef5.png",
+      "/images/projects/grndef6.png",
+      "/images/projects/grndef7.png",
+    ],
     details: "Made this project as I went deeper into the motorsports rabbit hole. Specifically how ground effect basically turns a car's underbody into a giant Venturi that sucks it onto the track.I wanted to see that pressure drop happen in real life, not just stare at diagrams. So I modeled a tiny ground tunnel in TinkerCad, exported the STL, and then rebuilt the same shape with cardboard and masking tape along with my teammate because sometimes you've gotta go analog (I could not have built the rig without him). I then imported the STL into SimScale, slapped on inlet/outlet boundary conditions, meshed it up, and ran the CFD sim. Meanwhile, the cardboard version got a fan taped to one end and a hole cut along the throat where the tunnel tightens. Stuck a tissue over it. Turned the fan on. The tissue immediately got pulled into the tunnel, no ambiguity, just a piece of paper getting vacuumed inward by the pressure differential on either side. Same physics showed up in the simulation streamlines and in my janky cardboard setup. Kind of wild that a principle keeping F1 cars planted at 300 km/h also works with masking tape and a CPU fan. ", // ← paste your extended write-up here
   },
   {
@@ -129,6 +161,16 @@ export const PROJECTS = [
     status: "Not Built",
     github: "https://github.com/sohmh/superresolveandcolorize",
     link: "https://sohmh.github.io/superresolveandcolorize/workflow/",
+    whyMade: "This was our Round 1 response to the ISRO Bharatiya Antariksh Hackathon problem on improving and colorizing Landsat thermal imagery.",
+    contribution: "I lead planning the two-stage workflow and coordinate a four-person interdisciplinary team, matching team strengths to model architecture, signal processing, and physics-informed loss design.",
+    howItWorks: "The proposed pipeline first uses SRCNN to increase thermal image resolution, then uses a Pix2Pix GAN conditioned on vegetation and land-use information to create an interpretable RGB view. It remained a plan; there is no working prototype.",
+    images: [
+      "/images/projects/isrobah1.png",
+      "/images/projects/isrobah2.png",
+      "/images/projects/isrobah3.png",
+      "/images/projects/isrobah4.png",
+      "/images/projects/isrobah5.png",
+    ],
     details: "Built this as our team's Round 1 submission for ISRO's Bharatiya Antariksh Hackathon 2026, tackling infrared image colorization for Landsat 9 thermal data (Problem Statement PS10). Just to be upfront, this stayed at the planning/architecture stage since it was for the round 1 submission that we didn't clear, so no working prototype yet. But the amount I learned designing it made it worth it. Planned a two stage pipeline: first, an SRCNN model to super-resolve blurry 200m thermal images into sharp 100m ones (with a physics informed loss to keep predicted temperatures physically realistic so that there is no model hallucinating -40°C deserts). Second, a Pix2Pix GAN to colorize that thermal data into interpretable RGB, conditioned on vegetation index and land use type so it doesn't confuse a shadowed forest with a shadowed parking lot.Getting into the weeds of this taught me a lot about how models actually learn; forward passes, backprop, why GANs need a discriminator to avoid blurry outputs, why spectral normalization keeps that discriminator from overpowering the generator, and why train/test splits need to be done by entire scenes (not random patches) to avoid the model secretly cheating on nearby, near identical patches. Equally valuable was the experience I got from managing the team : this was a 4 person interdisciplinary team and figuring out how to map each person's strengths onto a concrete piece of the pipeline like physics-informed loss design, signal processing, model architecture and keep everyone aligned on a tight deadline was its own kind of learning.",
   },
   {
@@ -139,6 +181,15 @@ export const PROJECTS = [
     status: "Built",
     github: "https://github.com/ESMVEE/Doppler-Speed-Detector",
     link: "https://youtu.be/YSIZyew5K6U",
+    whyMade: "I wanted to build a hands-on radar-inspired device and understand how the Doppler effect can be used to estimate speed.",
+    contribution: "I built the detector around an RCWL-0516 sensor and Arduino UNO, read and conditioned the sensor signal, implemented the speed calculation, and displayed results on an LCD.",
+    howItWorks: "The microwave sensor detects the Doppler shift from a moving object. The Arduino samples the resulting signal, estimates its frequency, applies the Doppler formula, and displays speed in km/h on a 16×2 LCD.",
+    images: [
+      "/images/projects/dplr1.png",
+      "/images/projects/dplr2.png",
+      "/images/projects/dplr3.png",
+      "/images/projects/dplr4.png",
+    ],
     details: "Built a radar inspired speed detector from scratch using an RCWL-0516 microwave sensor and an Arduino UNO. The sensor emits a 3.18 GHz signal; when it bounces off a moving object, the Doppler shift creates a beat frequency that the Arduino samples, crunches through the Doppler formula, and displays live speed in km/h on a 16x2 LCD. This was my first real electronics project : breadboards, datasheets, soldering fumes, the whole deal. While leading the team I learned how to read analog signals, do frequency estimation , condition noisy sensor data, and actually make a physical thing respond to code I wrote. It was genuinely fun going from how does radar even work? to waving my hand in front of a sensor and watching numbers pop up on a screen. Total build cost was under ₹900, took about two days, and taught me more about signal processing and hardware-software integration than any tutorial ever could. ",
   },
 
@@ -150,9 +201,108 @@ export const PROJECTS = [
     status: "Shipped",
     github: "https://github.com/sohmh/Physique-Log-Application",
     link: "https://physique-log-application.vercel.app/",
-    details: "",
+    whyMade: "I wanted a mobile app where workouts can be customized and daily fitness progress can be tracked.",
+    contribution: "This is a solo project. In terms of of open source, I hope people actually download the app from the repo and find it useful",
+    howItWorks: "Frontend: HTML5, CSS3, JavaScript (Vanilla), Storage: Browser localStorage API,  Data Visualization: HTML5 Canvas for charts , Mobile Packaging: Capacitor , Build Tools: Node.js, npm",
+    images: [
+      "/images/projects/phylog1.png",
+      "/images/projects/phylog2.png",
+    ],
+    details: "I had developed a practical system in a notebook to list workouts and track them daily. However, I faced two issues: 1. It was tiresome to carry a notebook and pencil everywhere , 2.Existing apps on the Play Store didn't allow fully customized workouts with personal diagrams and daily tracking. So I built Physique Log - a standalone mobile application that allows complete workout customization and daily progress tracking.",
   },
   // Add more projects here — they render automatically
+];
+
+// =============================================================================
+//  EXPERIENCE
+//  Add roles here; images can be added under public/images/experience/.
+// =============================================================================
+export const EXPERIENCES = [
+
+    {
+    id: "fitez",
+    period: "September 2026 - Present",
+    organization: "Fit Ez",
+    role: "Web Development & SEO Intern",
+    description: "I work with Fit Ez, a startup offering 1 on 1 diet coaching for weight loss, weight gain, and body recomposition, where I’m building the company’s website end to end. I work on the front end in HTML, CSS, and JavaScript. I also handled deployment on Cloudflare, connected the startup’s domain, and set up redirects from their old domains so existing links and traffic carried over to the new site. On top of the build, I’m working on search engine optimization so the site can be found by people looking for coaching online. Working on the pipeline from code to live site to discoverability has taught me how a real product goes from idea to something customers can actually find and use.",
+    images: [
+      "/images/exp/dauss.png",
+    ],
+  },
+  {
+    id: "dauss",
+    period: "April 2026 - Present",
+    organization: "DAUSS",
+    role: "Embedded Systems & AI Trainee",
+    description: "I’m part of the embedded systems team at DAUSS (Defense Aerial Unmanned Surveillance Sentinel), our college’s club that designs and builds fixed-wing UAVs. At the moment I’m learning the hardware side of flight: getting hands-on with the sensors a UAV depends on and studying the CrossFlight microcontroller that ties them together. It’s an early, learning-focused stage.",
+    images: [
+      "/images/exp/dauss.png",
+    ],
+  },
+  {
+    id: "aIDEAS",
+    period: "August 2026 - Present",
+    organization: "aIDEAS PVG",
+    role: "Sponsorship & Public Relations Member",
+    description: "I am a member of the Sponsorship & Public Relations Team at the AI & Data Science Department Club in my college. I write cold outreach emails, approach companies, and pitch our event and what we offer to potential sponsors. I chose this team over a technical one on purpose: I wanted hands-on exposure to how event finances are managed, how to frame a pitch for different audiences, and how to generate and follow up on leads. It’s still early and I’m learning as I go, mostly through iterating on outreach and seeing what gets a reply, but it’s already teaching me skills that technical work alone doesn’t.",
+    images: [
+      "/images/exp/aIDEASsponsor.jpg",
+    ],
+  },
+
+  {
+    id: "coers-copilot-crew",
+    period: "May 2026 - July 2026",
+    organization: "IIT Madras CoERS Road Safety Hackathon",
+    role: "Team Lead, Copilot Crew",
+    description: "As Team Leader of Copilot Crew, I ideated and independently developed the entire DriveLegal v1, taking ownership of its core architecture, technology choices, and initial implementation. I made the key decisions to adopt a Retrieval-Augmented Generation (RAG) framework, host a local language model, design the v1 user interface, and integrate the project's core components, while coordinating with teammates who contributed traffic rule data. I led the submission process by preparing and submitting the project code, producing a YouTube demonstration video, and creating the presentation for the IIT Madras CoERS Road Safety Hackathon, resulting in our team being selected for the final rounds. Following our selection, I transitioned from hands-on development to team orchestration, assessing individual strengths and delegating responsibilities across UI development, leaderboard implementation, JWT authentication, and traffic rule data collection. This experience strengthened my ability to take a project from ideation to a functional prototype, make critical technical decisions, lead execution under hackathon deadlines, and manage a technical team competing at a national-level road safety hackathon.",
+    images: [
+      "/images/exp/coers1.JPG",
+      "/images/exp/coers2.JPG",
+      "/images/exp/coers3.JPG",
+      "/images/exp/coers4.jpg",
+      "/images/exp/coers5.jpg",
+    ],
+  },
+
+  {
+    id: "gssoc-2026",
+    period: "May 2026 - June 2026",
+    organization: "GirlScript Summer of Code",
+    role: "Open Source Contributor",
+    description: "Merged 6 PRs across 3 Different Projects, maintaining a global rank of 287 in the first few weeks. At the end of the program, finished in the top 4% with a rank of 2289 among 47926 participants . 1. Algo :  Contributed to an educational learning platform by implementing persistent quiz and leaderboard data using Node.js, Express, SQLite, and Sequelize,  optimizing static image assets with Pillow/WebP and improving navigation UX through active state styling and dark mode support. 2.FinanceFlow :  Built a scalable topic based learning architecture using Next.js dynamic routes, centralized roadmap data, and reusable components. Implemented persistent progress tracking with localStorage and integrated curated learning resources including videos and recommended books. 3. NPMChat : Strengthened a React/TypeScript chat application's type safety by defining structured interfaces for authentication context, users, and application state. Refactored backend signup handling to standardize profile image data around avatarUrl, improving consistency between API payloads, controllers, and database models.",
+    images: [
+      "/images/exp/gssoc1.png",
+      "/images/exp/gssoc2.png",
+      "/images/exp/gssoc3.png",
+      "/images/exp/gssoc4.png",
+      "/images/exp/gssoc5.png",
+      "/images/exp/gssoc6.png",
+      "/images/exp/gssoc7.png",
+      "/images/exp/gssoc8.png",
+    ],
+  },
+  {
+    id: "youtube",
+    period: "April 2026 - Present",
+    organization: "Youtube",
+    role: "Content Creator",
+    description: "I run a YouTube channel where I explain my projects in a narrative style: the concepts behind them, how they work, what I built, and where things broke along the way. Rather than showing only the polished end result, I walk through the process, including the failed attempts and debugging, because that’s where most of the learning happens. The channel has grown to 100+ subscribers, and my most watched video has crossed 300 views.",
+    images: [
+      "/images/exp/yt.png",
+    ],
+  },
+  {
+    id: "maverick",
+    period: "April 2026 - July 2026",
+    organization: "Team Maverick",
+    role: "Aerodynamics Trainee",
+    description: "I didn't contribute anything to the car or the team and had left in the training phase due to different projected goals. I Joined the team driven by a genuine interest in motorsport physics and high performance engineering.  Developed foundational knowledge across: - Aerodynamics & Fluid Mechanics: Airfoil theory, lift & drag, downforce, boundary layer behavior. - Race Physics: Vehicle dynamics (roll, pitch, yaw, slip angle, toe, camber, caster), race lines, grip mechanics,  etc. - Materials & Car Architecture: Stress strain behavior, stiffness, toughness, component selection, subsystem  interactions and engineering tradeoffs. - An Idea about how data acquisition works : How sensor data is collected by the daq team and used by the aero team to evaluate and iterate wing elements. This experience pointed me toward studying computational physics, specifically applying numerical methods and simulation to physics problems. Genuinely goated team. The seniors here carry deep technical knowledge across domains that goes way beyond what any classroom teaches plus they put their heart & soul into teaching the trainees",
+    images: [
+      "/images/exp/fsae1.png",
+      "/images/exp/fsae2.png",
+    ],
+  },
 ];
 
 // =============================================================================
@@ -160,6 +310,11 @@ export const PROJECTS = [
 //  Short timeline of site/life updates shown on the About page right panel.
 // =============================================================================
 export const UPDATES = [
+  {
+    date: "10-06-26",
+    title: "Aavishkar Reseacrh Competition Zonal Round",
+    text: "Presented my Research Project 'LoomSet' at the Aavishkar Research Competition's Zonal Round",
+  },
   {
     date: "8-24-26",
     title: "Redesigned my portfolio",
@@ -283,18 +438,24 @@ export const VIDEOS = [
   },
   {
     id: "3",
+    title: "Team Kranti Project Demo - SIH26122",
+    duration: "4:12",
+    youtubeId: "https://youtu.be/PFpV1bBZkeE", // paste your YouTube video ID here
+  },
+  {
+    id: "4",
     title: "Validating the Ground Effect",
     duration: "2:18",
     youtubeId: "https://youtu.be/R6uJc3Jc2-Y",
   },
   {
-    id: "4",
+    id: "5",
     title: "LockChain : Escrow Based Secure Checkout System",
     duration: "6:42",
     youtubeId: "https://youtu.be/Hd92UBj7EZA",
   },
   {
-    id: "5",
+    id: "6",
     title: "Doppler Speed Detector",
     duration: "1:21",
     youtubeId: "https://youtu.be/YSIZyew5K6U",
