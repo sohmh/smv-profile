@@ -224,9 +224,10 @@ export default function App() {
     const resize = () => {
       const width = document.documentElement.clientWidth;
       const height = document.documentElement.clientHeight;
-      const scale = window.matchMedia('(max-width: 1200px), (pointer: coarse), (orientation: portrait)').matches
-        ? 1
-        : Math.min((height * 0.84) / 900, (width * 0.76) / 1160);
+      const mobileScreen = width <= 1200 || height > width
+        || window.matchMedia('(pointer: coarse)').matches;
+      assembly.classList.toggle('is-mobile-screen', mobileScreen);
+      const scale = mobileScreen ? 1 : Math.min((height * 0.84) / 900, (width * 0.76) / 1160);
       assembly.style.setProperty('--crt-scale', String(scale));
     };
     resize();
