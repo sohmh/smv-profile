@@ -224,7 +224,7 @@ export default function App() {
     const resize = () => {
       const width = document.documentElement.clientWidth;
       const height = document.documentElement.clientHeight;
-      const scale = window.matchMedia('(max-width: 699px)').matches
+      const scale = window.matchMedia('(max-width: 900px)').matches
         ? 1
         : Math.min((height * 0.84) / 900, (width * 0.76) / 1160);
       assembly.style.setProperty('--crt-scale', String(scale));
