@@ -1772,14 +1772,30 @@ a:visited { color: #551a8b; }
 .avatar-img--normal { filter: grayscale(1) contrast(1.1); mix-blend-mode: normal; }
 .loading-screen { animation: none; }
 
-@media (max-width: 900px) {
-  body { overflow: auto; height: 100dvh; }
-  .monitor-assembly { position: static; width: 100%; height: 100dvh; transform: none; translate: none; scale: 1; touch-action: auto; }
-  .monitor { position: static; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: var(--screen); }
+@media (max-width: 900px), (pointer: coarse) {
+  html, body, #root { width: 100%; min-width: 0; }
+  html, body { overflow: hidden; }
+  body { height: 100dvh; }
+  .monitor-assembly {
+    position: fixed; inset: 0; width: 100vw; height: 100dvh; margin: 0;
+    transform: none; translate: none; scale: 1; touch-action: auto;
+  }
+  .monitor { position: absolute; inset: 0; width: 100%; height: 100%; min-width: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: var(--screen); }
   .monitor::before, .monitor::after, .monitor-stand, .monitor-vents, .monitor-seam { display: none; }
-  .screen { height: 100%; padding: 5px; border: 2px solid #777; border-radius: 0; box-shadow: none; }
+  .screen { width: 100%; height: 100%; min-width: 0; padding: 5px; border: 0; border-radius: 0; box-shadow: none; }
   .content-scroll { overscroll-behavior: auto; }
-  .sidebar { position: static; height: auto; }
+  .body-grid { grid-template-columns: minmax(0, 1fr); }
+  .sidebar {
+    position: static; height: auto; border-right: 0; border-bottom: 2px solid var(--border);
+    flex-direction: row; flex-wrap: wrap; justify-content: center;
+  }
+  .brand { display: none; }
+  .nav { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .nav button { width: auto; }
+  .profile-row, .content-row { grid-template-columns: minmax(0, 1fr); }
+  .blog-page-panel, .experience-page-panel { grid-column: auto; }
+  .profile-inner { flex-direction: column; }
+  .avatar { align-self: center; }
   .titlebar .left::after { content: none; }
 }
 @media (max-width: 480px) {
