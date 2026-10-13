@@ -226,7 +226,6 @@ export default function App() {
       const height = document.documentElement.clientHeight;
       const mobileScreen = width <= 1200 || height > width
         || window.matchMedia('(pointer: coarse)').matches;
-      assembly.classList.toggle('is-mobile-screen', mobileScreen);
       const scale = mobileScreen ? 1 : Math.min((height * 0.84) / 900, (width * 0.76) / 1160);
       assembly.style.setProperty('--crt-scale', String(scale));
     };
