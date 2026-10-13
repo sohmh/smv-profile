@@ -770,8 +770,16 @@ body {
 
 @media (max-width: 699px) {
   .project-modal-layer { padding: 3px; }
-  .project-modal__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, .8fr); overflow-y: auto; }
-  .project-modal__details, .project-modal__gallery { overflow: visible; }
+  .project-modal__body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .project-modal__details, .project-modal__gallery {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
   .project-modal__details { border-right: 0; border-bottom: 1px solid var(--border); }
 }
 
