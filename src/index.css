@@ -1689,7 +1689,7 @@ body {
 .monitor-assembly {
   --crt-scale: 1;
   position: fixed; z-index: 2; left: 50%; top: calc(50% - 5dvh); width: 1160px; height: 900px;
-  isolation: isolate; translate: -50% -50%; scale: var(--crt-scale); transform-origin: center;
+  isolation: isolate; transform: translate(-50%, -50%) scale(var(--crt-scale)); transform-origin: center;
   touch-action: auto;
 }
 .monitor {
@@ -2066,8 +2066,6 @@ select {
     height: 100dvh !important;
     margin: 0;
     transform: none !important;
-    translate: none !important;
-    scale: 1 !important;
   }
   .monitor {
     position: absolute;
