@@ -25,18 +25,37 @@ const NAV_TOP = [
 ];
 
 const NAV_SIDE = [
-  { id: 'projects',     icon: '◈', label: 'Projects'    },
-  { id: 'experience',  icon: '◷', label: 'Experience'  },
-  { id: 'credentials', icon: '◉', label: 'Credentials' },
-  { id: 'activity',    icon: '●', label: 'Activity'    },
-  { id: 'videos',      icon: '▶', label: 'Videos'     },
-  { id: 'events',      icon: '◆', label: 'Events'     },
-  { id: 'notes',       icon: '□', label: 'Notes'      },
-  { id: 'gallery',    icon: '▧', label: 'Gallery'    },
+  { id: 'projects',     icon: 'projects',     label: 'Projects'    },
+  { id: 'experience',  icon: 'experience',  label: 'Experience'  },
+  { id: 'credentials', icon: 'credentials', label: 'Credentials' },
+  { id: 'activity',    icon: 'activity',    label: 'Activity'    },
+  { id: 'videos',      icon: 'videos',      label: 'Videos'     },
+  { id: 'events',      icon: 'events',      label: 'Events'     },
+  { id: 'notes',       icon: 'notes',       label: 'Notes'      },
+  { id: 'gallery',    icon: 'gallery',     label: 'Gallery'    },
 ];
+
+const NAV_ICON_PATHS = {
+  projects: 'M1.5 4h5l1.5 2h6.5v7.5h-13z M1.5 6h13',
+  experience: 'M2 4h12v9H2z M2 6.5h12 M5 4V2.5h6V4 M7 9h2',
+  credentials: 'M3 2.5h10v8H3z M5 4.5h6 M5 6.5h4 M5 10.5l-1 3.5 4-2 4 2-1-3.5',
+  activity: 'M1 8h3l2-4 3 8 2-5 1 1h3',
+  videos: 'M2 3.5h8v9H2z M10 6l4-2v8l-4-2z',
+  events: 'M2 3.5h12v10H2z M2 6.5h12 M5 2v3 M11 2v3 M5 8.5h2 M9 8.5h2 M5 11h2',
+  notes: 'M3 2h9l2 2v10H3z M5 6h7 M5 8.5h7 M5 11h5',
+  gallery: 'M2 2.5h12v11H2z M3 11l3-3 2 2 3-4 3 5 M5 5.5h.01',
+};
 
 // ── helpers ────────────────────────────────────────────────────────────────
 function pad(n) { return String(n).padStart(2, '0'); }
+
+function NavIcon({ name }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
+      <path d={NAV_ICON_PATHS[name]} />
+    </svg>
+  );
+}
 
 function useClock() {
   const [time, setTime] = useState('');
@@ -135,7 +154,7 @@ function Sidebar({ page, setPage }) {
             className={page === id ? 'active' : ''}
             onClick={() => { playClickSound(); setPage(id); }}
           >
-            <span className="tag">{icon}</span> {label}
+            <span className="nav-icon"><NavIcon name={icon} /></span> {label}
           </button>
         ))}
       </nav>
