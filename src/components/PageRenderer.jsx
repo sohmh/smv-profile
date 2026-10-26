@@ -186,7 +186,7 @@ function ProjectCard({ p, onReadMore }) {
         </div>
       )}
 
-      <button className="project-expand-btn" onClick={() => onReadMore(p)}>
+      <button className="entry-btn project-expand-btn" onClick={() => onReadMore(p)}>
         Read more
       </button>
 

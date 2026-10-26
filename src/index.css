@@ -609,19 +609,7 @@ body {
 /* ▼ details toggle button */
 .project-expand-btn {
   margin-top: 8px;
-  background: none;
-  border: none;
-  border-bottom: 1px dashed var(--border);
-  color: var(--text-dim);
-  font-family: inherit;
-  font-size: 10px;
-  letter-spacing: .6px;
-  padding: 2px 0;
-  cursor: pointer;
-  transition: color .15s;
-  display: block;
 }
-.project-expand-btn:hover { color: var(--text); }
 
 /* Extended details panel */
 .project-details {

@@ -3,9 +3,18 @@
 // To add new nav items, add entries to NAV_TOP or NAV_SIDE below.
 
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import clickSound from './assets/click.mp3';
 import PageRenderer from './components/PageRenderer.jsx';
 import RoomScene from './components/RoomScene.jsx';
 import { PROFILE, STATS, SYSTEM_MESSAGE, STATUS_BAR } from './data/content.jsx';
+
+let clickAudio;
+
+function playClickSound() {
+  if (!clickAudio) clickAudio = new Audio(clickSound);
+  clickAudio.currentTime = 0;
+  clickAudio.play().catch(error => console.warn('Click sound could not be played.', error));
+}
 
 // ── navigation config ──────────────────────────────────────────────────────
 const NAV_TOP = [
@@ -78,7 +87,7 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
     <div className="menubar">
       <nav className="menu-items" aria-label="Top navigation">
         {NAV_TOP.map(({ id, label, href, download }) => href ? (
-          <a key={id} id={`nav-top-${id}`} href={href} download={download ? '' : undefined}>
+          <a key={id} id={`nav-top-${id}`} href={href} download={download ? '' : undefined} onClick={playClickSound}>
             {label}
           </a>
         ) : (
@@ -87,14 +96,14 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
             id={`nav-top-${id}`}
             data-page={id}
             className={page === id ? 'active' : ''}
-            onClick={() => setPage(id)}
+            onClick={() => { playClickSound(); setPage(id); }}
           >
             {label}
           </button>
         ))}
       </nav>
       <div className="theme-toggle">
-        <button className="screen-fullscreen" type="button" onClick={toggleFullscreen} aria-label="Toggle screen fullscreen" title="Toggle fullscreen">
+        <button className="screen-fullscreen" type="button" onClick={() => { playClickSound(); toggleFullscreen(); }} aria-label="Toggle screen fullscreen" title="Toggle fullscreen">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
         </button>
         <button
@@ -105,7 +114,7 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
           aria-checked={theme === 'dark'}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           title={`Theme: ${theme}`}
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          onClick={() => { playClickSound(); setTheme(theme === 'light' ? 'dark' : 'light'); }}
         >
           <span className="theme-switch__thumb" />
         </button>
@@ -124,7 +133,7 @@ function Sidebar({ page, setPage }) {
             id={`nav-side-${id}`}
             data-page={id}
             className={page === id ? 'active' : ''}
-            onClick={() => setPage(id)}
+            onClick={() => { playClickSound(); setPage(id); }}
           >
             <span className="tag">{icon}</span> {label}
           </button>
