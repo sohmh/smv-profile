@@ -662,9 +662,10 @@ export const NOTES_TAGS = ["process", "tools", "writing", "ai", "habits"];
 export const CONTACT = {
   email: "sohamsgurav2006@gmail.com",
   location: "Pune, India",
-  github: "sohmh",              // GitHub username (@ is stripped for API/links)
-  linkedin: "/in/sohamgurav25", // LinkedIn slug e.g. /in/your-name
-  twitter: "7smv25",            // Twitter/X handle — leave "" to hide
+  github: "sohmh",
+  linkedin: "/in/sohamgurav25",
+  twitter: "7smv25",
+  instagram: "so.hmh",
   medium: "https://medium.com/@esmvee2006",
   leetcode: "sohmh",              // ← add your LeetCode username here (used for heatmap)
   researchgate : "https://www.researchgate.net/profile/Soham-Gurav",

@@ -41,11 +41,12 @@ function TagList({ tags }) {
 
 // ── social links (used on Contact page) ────────────────────────────────────
 function SocialLinks() {
-  const { email, github, linkedin, twitter, medium, bereal, letterboxd, researchgate } = CONTACT;
+  const { email, github, linkedin, twitter, instagram, medium, bereal, letterboxd, researchgate } = CONTACT;
 
   // Strip leading @ so the user can write "@handle" or "handle" in content.jsx
   const gh = github?.replace(/^@/, '') || '';
   const tw = twitter?.replace(/^@/, '') || '';
+  const ig = instagram?.replace(/^@/, '') || '';
 
   const links = [
     {
@@ -75,6 +76,13 @@ function SocialLinks() {
       href: tw ? `https://twitter.com/${tw}` : null,
       display: tw ? `@${tw} ↗` : '',
       show: !!tw,
+    },
+    {
+      key: 'instagram',
+      label: 'INSTAGRAM',
+      href: ig ? `https://instagram.com/${ig}` : null,
+      display: ig ? `@${ig} ↗` : '',
+      show: !!ig,
     },
     {
       key: 'medium',
