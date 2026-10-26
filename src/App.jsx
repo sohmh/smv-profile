@@ -16,6 +16,13 @@ function playClickSound() {
   clickAudio.play().catch(error => console.warn('Click sound could not be played.', error));
 }
 
+function handleButtonClick(event) {
+  if (!(event.target instanceof Element)) return;
+  if (event.target.closest('button, [role="button"], .menu-items a, .entry-btn, .send-btn, .cert-verify-btn')) {
+    playClickSound();
+  }
+}
+
 // ── navigation config ──────────────────────────────────────────────────────
 const NAV_TOP = [
   { id: 'about',   label: 'About'   },
@@ -106,7 +113,7 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
     <div className="menubar">
       <nav className="menu-items" aria-label="Top navigation">
         {NAV_TOP.map(({ id, label, href, download }) => href ? (
-          <a key={id} id={`nav-top-${id}`} href={href} download={download ? '' : undefined} onClick={playClickSound}>
+          <a key={id} id={`nav-top-${id}`} href={href} download={download ? '' : undefined}>
             {label}
           </a>
         ) : (
@@ -115,14 +122,14 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
             id={`nav-top-${id}`}
             data-page={id}
             className={page === id ? 'active' : ''}
-            onClick={() => { playClickSound(); setPage(id); }}
+            onClick={() => setPage(id)}
           >
             {label}
           </button>
         ))}
       </nav>
       <div className="theme-toggle">
-        <button className="screen-fullscreen" type="button" onClick={() => { playClickSound(); toggleFullscreen(); }} aria-label="Toggle screen fullscreen" title="Toggle fullscreen">
+        <button className="screen-fullscreen" type="button" onClick={toggleFullscreen} aria-label="Toggle screen fullscreen" title="Toggle fullscreen">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
         </button>
         <button
@@ -133,7 +140,7 @@ function Menubar({ page, setPage, theme, setTheme, toggleFullscreen }) {
           aria-checked={theme === 'dark'}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           title={`Theme: ${theme}`}
-          onClick={() => { playClickSound(); setTheme(theme === 'light' ? 'dark' : 'light'); }}
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         >
           <span className="theme-switch__thumb" />
         </button>
@@ -152,7 +159,7 @@ function Sidebar({ page, setPage }) {
             id={`nav-side-${id}`}
             data-page={id}
             className={page === id ? 'active' : ''}
-            onClick={() => { playClickSound(); setPage(id); }}
+            onClick={() => setPage(id)}
           >
             <span className="nav-icon"><NavIcon name={icon} /></span> {label}
           </button>
@@ -245,6 +252,11 @@ export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('smv-theme') === 'dark' ? 'dark' : 'light');
   const clock  = useClock();
   const uptime = useUptime();
+
+  useEffect(() => {
+    document.addEventListener('click', handleButtonClick, true);
+    return () => document.removeEventListener('click', handleButtonClick, true);
+  }, []);
 
   useLayoutEffect(() => {
     const assembly = document.querySelector('.monitor-assembly');

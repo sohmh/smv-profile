@@ -169,7 +169,7 @@ body {
   border-color: #888 #111 #111 #888;
 }
 .menu-items button:hover,
-.menu-items a:hover                 { text-decoration: underline; }
+.menu-items a:hover                 { text-decoration: none; }
 .menu-items button.active          { border-bottom: 2px solid var(--text); text-shadow: var(--glow); font-weight: bold; }
 
 /* theme toggle dots */
@@ -1762,13 +1762,18 @@ body {
 .panel-title { padding: 5px 8px; }
 .titlebar, .menubar, .sidebar, .panel, .sysmsg, .body-grid, .statusbar { border-color: var(--border); }
 * { text-shadow: none !important; }
-button, .entry-btn, .send-btn, .cert-verify-btn {
+button:not(.theme-switch), .entry-btn, .send-btn, .cert-verify-btn, .menu-items a {
   border-radius: 0 !important; background: var(--medium-btn); color: var(--text);
   border: 1px solid; border-color: #fff #666 #666 #fff;
-  box-shadow: inset 1px 1px #ffffff55, inset -1px -1px #0005;
+  box-shadow: 2px 2px 0 #666, inset 1px 1px #ffffff55, inset -1px -1px #0005;
+  transition: transform 70ms steps(2, end), box-shadow 70ms steps(2, end);
 }
-[data-theme="dark"] button, [data-theme="dark"] .entry-btn, [data-theme="dark"] .send-btn, [data-theme="dark"] .cert-verify-btn {
+[data-theme="dark"] button:not(.theme-switch), [data-theme="dark"] .entry-btn, [data-theme="dark"] .send-btn, [data-theme="dark"] .cert-verify-btn, [data-theme="dark"] .menu-items a {
   background: #444; color: #e6e6e6; border-color: #888 #111 #111 #888;
+}
+button:not(.theme-switch):active, .entry-btn:active, .send-btn:active, .cert-verify-btn:active, .menu-items a:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 #666, inset 1px 1px #0004, inset -1px -1px #ffffff33;
 }
 a, .social-link-val--link { color: var(--link); text-decoration: underline; }
 a:visited { color: #551a8b; }
