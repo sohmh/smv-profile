@@ -654,6 +654,35 @@ export const NOTES = [
 
 export const NOTES_TAGS = ["process", "tools", "writing", "ai", "habits"];
 
+// Add album covers to public/mixtapes/ and list each album here.
+// Spotify URLs should point to the album page.
+export const MIXTAPES = [
+  {
+    title: "jazz",
+    artist: "sohmh",
+    cover: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84bcf55a291d79ef3ecc979964",
+    spotifyUrl: "https://open.spotify.com/playlist/44tI410AYDoDP4imOUwsbL?si=bd39de3ca71a4075",
+  },
+  {
+    title: "gotg",
+    artist: "sohmh",
+    cover: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84b2fe64cf37a0292d27b44c2b",
+    spotifyUrl: "https://open.spotify.com/playlist/2jkB0dvwfM4sDxJ6XzXbp5?si=33f872c1cf0247c2",
+  },
+  {
+    title: "αγάπη",
+    artist: "sohmh",
+    cover: "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84794992541c9d7069384ad164",
+    spotifyUrl: "https://open.spotify.com/playlist/0lT8ctvbkg1RAi9rP2L8JE?si=da84bf69c1e949dd",
+  },
+  {
+    title: "++",
+    artist: "sohmh",
+    cover: "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da849675d78de2cd29571f142fe6",
+    spotifyUrl: "https://open.spotify.com/playlist/6H5CS9VseTQlhEunHaxoHY?si=ef340bac0f784ea0",
+  },
+];
+
 // =============================================================================
 //  CONTACT
 //  NOTE: You can include or omit the @ symbol for handles — it's stripped

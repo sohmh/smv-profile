@@ -16,6 +16,7 @@ import {
   VIDEOS, FEATURED_VIDEO,
   CREDENTIALS, CERTIFICATES,
   EVENTS, NOTES,
+  MIXTAPES,
   CONTACT,
 } from '../data/content.jsx';
 
@@ -904,6 +905,34 @@ function GalleryPage() {
   );
 }
 
+function MixtapesPage() {
+  return (
+    <Panel title="MIXTAPES" className="mixtapes-panel">
+      <p className="gallery-intro">albums on repeat. click a cover to listen on Spotify.</p>
+      {MIXTAPES.length === 0 ? (
+        <div className="gallery-empty">Add albums to the MIXTAPES list in <code>src/data/content.jsx</code>.</div>
+      ) : (
+        <div className="mixtapes-grid">
+          {MIXTAPES.map(album => (
+            <a
+              className="mixtape-card"
+              href={album.spotifyUrl}
+              key={`${album.title}-${album.artist}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Listen to ${album.title} by ${album.artist} on Spotify`}
+            >
+              <img src={album.cover} alt={`${album.title} album cover`} loading="lazy" />
+              <span className="mixtape-card__title">{album.title}</span>
+              <span className="mixtape-card__artist">{album.artist}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </Panel>
+  );
+}
+
 // ── routing map ────────────────────────────────────────────────────────────
 const PAGE_MAP = {
   about:       <AboutPage />,
@@ -917,6 +946,7 @@ const PAGE_MAP = {
   events:      <EventsPage />,
   notes:       <NotesPage />,
   gallery:     <GalleryPage />,
+  mixtapes:    <MixtapesPage />,
 };
 
 export default function PageRenderer({ page }) {

@@ -860,6 +860,40 @@ body {
   max-height: 100%;
 }
 
+.mixtapes-panel { grid-column: 1 / -1; }
+.mixtapes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.mixtape-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text);
+  text-decoration: none;
+}
+.mixtape-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  transition: opacity .15s ease;
+}
+.mixtape-card:hover img { opacity: .8; }
+.mixtape-card:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.mixtape-card__title,
+.mixtape-card__artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mixtape-card__title { font-size: 11px; }
+.mixtape-card__artist { color: var(--text-dim); font-size: 10px; }
+
 .project-skills-panel { align-self: start; }
 .project-skill-groups { display: grid; gap: 14px; }
 .project-skill-group h3 {
@@ -1055,6 +1089,7 @@ body {
   .content-row {
     grid-template-columns: 1fr;
   }
+  .mixtapes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .blog-page-panel,
   .experience-page-panel { grid-column: auto; }
   .profile-inner { flex-direction: column; }

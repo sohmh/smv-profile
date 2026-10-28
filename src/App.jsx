@@ -40,6 +40,7 @@ const NAV_SIDE = [
   { id: 'events',      icon: 'events',      label: 'Events'     },
   { id: 'notes',       icon: 'notes',       label: 'Notes'      },
   { id: 'gallery',    icon: 'gallery',     label: 'Gallery'    },
+  { id: 'mixtapes',   icon: 'mixtapes',    label: 'Mixtapes'   },
 ];
 
 const NAV_ICON_PATHS = {
@@ -51,6 +52,7 @@ const NAV_ICON_PATHS = {
   events: 'M2 3.5h12v10H2z M2 6.5h12 M5 2v3 M11 2v3 M5 8.5h2 M9 8.5h2 M5 11h2',
   notes: 'M3 2h9l2 2v10H3z M5 6h7 M5 8.5h7 M5 11h5',
   gallery: 'M2 2.5h12v11H2z M3 11l3-3 2 2 3-4 3 5 M5 5.5h.01',
+  mixtapes: 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13z M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M8 7.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z',
 };
 
 // ── helpers ────────────────────────────────────────────────────────────────
